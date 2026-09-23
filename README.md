@@ -2,7 +2,7 @@
 
 An interactive, browser-based practice quiz for the Microsoft **SC-200: Security Operations Analyst Associate** certification exam. 260+ scenario-based questions covering the full skills-measured surface, with category filters, difficulty tagging, study and exam modes, and a scored breakdown by domain.
 
-**[Try it live →](#)** 
+**[Try it live →](https://v3153.github.io/sc200-practice-quiz/)** 
 
 ## What's covered
 
@@ -30,7 +30,7 @@ Questions are grouped into nine practical categories, chosen to map more closely
 
 ## Usage
 
-Just open `index.html` in any modern browser, or use the [live version](#) hosted via GitHub Pages. No installation, build step, or dependencies.
+Just open `index.html` in any modern browser, or use the [live version](https://v3153.github.io/sc200-practice-quiz/) hosted via GitHub Pages. No installation, build step, or dependencies.
 
 ## A note on content
 
