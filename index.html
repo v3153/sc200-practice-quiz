@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SC-200 Practice Quiz</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#334155; --text:#e2e8f0; --muted:#94a3b8;
+    --accent:#3b82f6; --good:#22c55e; --bad:#ef4444; --warn:#f59e0b;
+    --border:#334155;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.55}
+  header{background:linear-gradient(90deg,#0b1220,#1e293b);padding:18px 24px;border-bottom:2px solid var(--accent);
+         display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+  h1{margin:0;font-size:22px;color:#f1f5f9}
+  .sub{font-size:12px;color:var(--muted);margin-top:4px}
+  .container{max-width:1100px;margin:0 auto;padding:24px}
+  .controls{background:var(--panel);padding:16px;border-radius:10px;margin-bottom:16px;
+            display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  select,button{background:var(--panel2);color:var(--text);border:1px solid var(--border);
+                border-radius:6px;padding:8px 12px;font-size:14px;cursor:pointer}
+  button:hover{background:var(--accent);border-color:var(--accent)}
+  button.secondary{background:transparent}
+  button.danger{background:var(--bad);border-color:var(--bad)}
+  button.danger:hover{background:#dc2626}
+  .stats{display:flex;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+  .stats b{color:var(--text)}
+  .progress-bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-top:6px}
+  .progress-fill{height:100%;background:var(--accent);transition:width .3s}
+  .question-card{background:var(--panel);padding:22px;border-radius:10px;margin-bottom:16px;
+                 border-left:4px solid var(--accent)}
+  .qhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+  .qnum{font-size:13px;color:var(--muted)}
+  .qtag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:4px;background:var(--panel2);
+        color:var(--muted);margin-right:4px}
+  .qtag.hard{background:#7f1d1d;color:#fecaca}
+  .qtag.med{background:#78350f;color:#fed7aa}
+  .qtag.weak{background:#7c2d12;color:#fecaca}
+  .qtext{font-size:15px;margin-bottom:14px;white-space:pre-wrap}
+  .qtext code,pre{background:#0b1220;padding:2px 6px;border-radius:4px;font-family:"Consolas","Monaco",monospace;
+                  font-size:13px;color:#67e8f9}
+  pre{padding:10px;overflow-x:auto;display:block;white-space:pre}
+  .options{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+  .option{background:#0b1220;padding:12px 14px;border-radius:6px;cursor:pointer;
+          border:1px solid var(--border);transition:background .15s,border-color .15s;user-select:none}
+  .option:hover{border-color:var(--accent)}
+  .option.selected{border-color:var(--accent);background:#1e3a8a33}
+  .option.correct{border-color:var(--good);background:#052e1633}
+  .option.wrong{border-color:var(--bad);background:#450a0a33}
+  .option.locked{cursor:default}
+  .option-letter{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;
+                 background:var(--panel2);color:var(--text);border-radius:50%;margin-right:10px;font-weight:600;font-size:12px}
+  .option.correct .option-letter{background:var(--good);color:#052e16}
+  .option.wrong .option-letter{background:var(--bad);color:#450a0a}
+  .action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .explanation{background:#0b1220;border-left:3px solid var(--good);padding:12px 14px;border-radius:6px;
+               margin-top:10px;font-size:14px;color:#cbd5e1}
+  .explanation.wrong-answer{border-left-color:var(--bad)}
+  .explanation strong{color:var(--good)}
+  .explanation.wrong-answer strong{color:var(--bad)}
+  #summary{background:var(--panel);padding:24px;border-radius:10px;text-align:center}
+  #summary h2{margin-top:0}
+  #summary .final-score{font-size:52px;font-weight:700;color:var(--accent);margin:10px 0}
+  #summary .pass{color:var(--good)}
+  #summary .fail{color:var(--bad)}
+  .breakdown{margin-top:20px;text-align:left}
+  .breakdown-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+  .footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+  .keyhint{color:var(--muted);font-size:12px;margin-top:8px}
+  kbd{background:var(--panel2);padding:1px 6px;border-radius:3px;font-family:monospace;font-size:11px}
+  @media (max-width:640px){
+    .container{padding:14px}
+    header{padding:14px}
+    h1{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>SC-200 Practice Quiz</h1>
+    <div class="sub">260+ scenario-based questions covering the SC-200 skills-measured surface, with category and difficulty filters</div>
+  </div>
+  <div class="stats" id="statsBox">
+    <div>Q <b id="statCurrent">0</b>/<b id="statTotal">0</b></div>
+    <div>Correct: <b id="statCorrect">0</b></div>
+    <div>Wrong: <b id="statWrong">0</b></div>
+    <div>Score: <b id="statScore">0%</b></div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="controls">
+    <label>Category:
+      <select id="filterCategory">
+        <option value="all">All (250+)</option>
+        <option value="automation">Automation for XDR + Sentinel</option>
+        <option value="respond-xdr">Respond to alerts in Defender XDR</option>
+        <option value="sentinel-detect">Detect threats via Sentinel platform</option>
+        <option value="mde">Respond to alerts in Defender for Endpoint</option>
+        <option value="purview">Investigate M365 activities (Purview / audit / graph)</option>
+        <option value="hunting">Threat hunting + KQL + Defender XDR hunting</option>
+        <option value="ingest">Data ingestion into Sentinel</option>
+        <option value="config">Sentinel SIEM/platform config + RBAC</option>
+        <option value="detections">Configure detections + MITRE</option>
+      </select>
+    </label>
+    <label>Difficulty:
+      <select id="filterDifficulty">
+        <option value="all">All</option>
+        <option value="hard">Hard only</option>
+        <option value="med">Medium only</option>
+      </select>
+    </label>
+    <label>Mode:
+      <select id="mode">
+        <option value="study">Study (show explanation immediately)</option>
+        <option value="exam">Exam (score at end)</option>
+      </select>
+    </label>
+    <button id="startBtn">Start / Restart</button>
+    <button class="secondary" id="shuffleBtn">Shuffle</button>
+    <button class="danger" id="resetBtn">Reset progress</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="keyhint">Keyboard: <kbd>1-4</kbd> pick option · <kbd>Enter</kbd> next · <kbd>?</kbd> reveal answer (study mode)</div>
+
+  <div id="quizArea"></div>
+  <div id="summary" style="display:none"></div>
+  <div class="footer">
+    SC-200 Practice Quiz · No copyrighted questions reproduced · Questions authored to match Microsoft's July 2026 SC-200 skills-measured surface.
+  </div>
+</div>
+
+<script>
+/* =================================================================
+   QUESTION BANK — 260 items
+   Fields: id, cat, diff, q, opts[], a (index of correct), e (explanation)
+   cat: automation | respond-xdr | sentinel-detect | mde | purview | hunting | ingest | config | detections
+   diff: hard | med
+   ================================================================= */
+const QUESTIONS = [
+
+/* ============  AUTOMATION FOR XDR + SENTINEL — 50 Qs  ============ */
+{id:1,cat:"automation",diff:"hard",
+q:"You have a Sentinel workspace with playbooks in a resource group RG-Auto. A playbook does NOT appear in the Actions → Run playbook dropdown on an incident. All users have Subscription Contributor. What should you configure?",
+opts:["Assign Sentinel Responder to the analysts on RG-Auto","Assign Microsoft Sentinel Automation Contributor to the Azure Security Insights service principal on RG-Auto","Grant analysts Logic App Contributor at the subscription","Re-import the playbook via ARM template"],
+a:1,e:"Sentinel must be granted explicit permission via the *Azure Security Insights* service principal on the playbook's resource group. Assigning it on the playbook resource itself or granting Logic App Contributor is not sufficient — the playbook still won't be selectable in the dropdown."},
+
+{id:2,cat:"automation",diff:"hard",
+q:"An NRT analytics rule creates an incident. You have a Logic App playbook using the incident trigger. What is the minimum configuration to run it automatically?",
+opts:["Convert the playbook to alert trigger and use Alert Automation (Classic)","Create an automation rule attached to the NRT rule with a Run playbook action","Convert the NRT rule to a Scheduled rule","Add the playbook to Incident settings on the analytics rule wizard"],
+a:1,e:"For incident-trigger playbooks, you must create an automation rule with a Run playbook action. Alert Automation (Classic) is reserved for alert-trigger playbooks. Incident settings on the rule don't allow direct playbook attachment for NRT rules."},
+
+{id:3,cat:"automation",diff:"hard",
+q:"Tier-1 SOC analysts must MANUALLY run preconfigured playbooks against incidents. Follow least privilege. Which two roles?",
+opts:["Sentinel Reader + Logic App Contributor","Microsoft Sentinel Responder + Microsoft Sentinel Playbook Operator","Sentinel Contributor + Automation Contributor","Security Administrator + Sentinel Responder"],
+a:1,e:"Responder = manage incidents. Playbook Operator = manually trigger playbooks on incidents/alerts/entities. This is the least-privilege combination for manual runs."},
+
+{id:4,cat:"automation",diff:"med",
+q:"You need to CREATE playbooks in Sentinel following least privilege. Which role?",
+opts:["Sentinel Contributor","Owner","Logic App Contributor","Sentinel Responder"],
+a:2,e:"Logic App Contributor is the least-privilege role to create, edit, and add playbooks. Sentinel Contributor gives more than needed and doesn't grant Logic App creation."},
+
+{id:5,cat:"automation",diff:"hard",
+q:"A playbook must isolate an Azure VM. It works when run manually but fails from an automation rule with error 403. Root cause?",
+opts:["Different Entra tenant","The playbook's managed identity lacks Virtual Machine Contributor on the VM","Logic App is paused","HTTP action instead of Azure connector"],
+a:1,e:"Playbooks authenticate to Azure resources through their managed identity. Grant Virtual Machine Contributor at VM scope for isolate actions."},
+
+{id:6,cat:"automation",diff:"hard",
+q:"An Automation Rule condition offers Incident provider. Which providers are listed regardless of your data connectors?",
+opts:["Microsoft Sentinel and Microsoft 365 Defender","Microsoft Sentinel only","All connected sources dynamically","Microsoft Sentinel, Defender XDR, and Entra ID Protection"],
+a:0,e:"The Incident provider dropdown always shows exactly Microsoft Sentinel and Microsoft 365 Defender (Microsoft Defender XDR). It does NOT change based on connectors."},
+
+{id:7,cat:"automation",diff:"med",
+q:"You want to create a playbook that runs in response to Sentinel incidents. What should you create FIRST?",
+opts:["Automation rule","Logic App","Custom detection rule","Analytics rule"],
+a:1,e:"Sentinel playbooks ARE Logic Apps. Create the Logic App first (with the Sentinel incident trigger), then attach via automation rule."},
+
+{id:8,cat:"automation",diff:"med",
+q:"Defender for Endpoint: alerts should notify a distribution group only for a specific device group. Which two settings to configure in the alert notification rule?",
+opts:["Which users to notify AND the device group","Alert severity threshold only","Only the device group","Which users to notify and alert category"],
+a:0,e:"Configure both WHO gets notified AND the device group scope. Severity/category filters alone don't scope by device."},
+
+{id:9,cat:"automation",diff:"hard",
+q:"An app named App1 legitimately clears application server logs and triggers repeated Defender alerts. Prevent App1 from triggering alerts while other apps still do. Configure what?",
+opts:["An automated investigation (AIR)","A suppression rule scoped to the alert title + IoC + conditions","A custom detection rule with Informational severity","An alert policy exclusion"],
+a:1,e:"Suppression rules mute known-benign alerts based on title, IoC, and conditions. AIR investigates; custom detections generate more alerts; alert policies are M365 (different)."},
+
+{id:10,cat:"automation",diff:"hard",
+q:"Automatic attack disruption must isolate a compromised device AND disable a compromised user account during an ongoing attack. Where do you enable this?",
+opts:["Microsoft Defender for Endpoint → ASR rules","Microsoft Defender for Identity → Advanced features","Microsoft Entra ID → Conditional Access","Microsoft Sentinel → Fusion analytics rule"],
+a:1,e:"Automatic attack disruption toggle sits under Advanced features in Microsoft Defender for Identity. It integrates with MDE (device isolation) and Entra/AD (account disabling)."},
+
+{id:11,cat:"automation",diff:"hard",
+q:"A custom detection rule in Defender XDR is validating. The query aggregates by DeviceId but validation fails on required columns. Fix?",
+opts:["Add | project Timestamp, DeviceId, ReportId after summarize","Use summarize (Timestamp, ReportId)=arg_max(Timestamp, ReportId), count() by DeviceId","Replace summarize with distinct DeviceId, Timestamp, ReportId","Change rule frequency"],
+a:1,e:"arg_max preserves Timestamp and ReportId per DeviceId while still aggregating. project after summarize cannot restore columns removed by aggregation."},
+
+{id:12,cat:"automation",diff:"med",
+q:"Convert an existing hunting KQL query directly into a custom detection with minimum effort. Where do you start?",
+opts:["From Rules → New rule","From Advanced hunting → Export → Create detection rule","From Settings → Endpoints","From Sentinel → Analytics rules"],
+a:1,e:"Advanced hunting has an Export menu with Create detection rule that pre-populates the rule from your tested query."},
+
+{id:13,cat:"automation",diff:"hard",
+q:"Custom detection rule wizard shows an Actions step. Which actions are available?",
+opts:["Isolate device, Run AV scan, Initiate automated investigation, Restrict app execution, Collect investigation package (subset per query columns)","Only email notifications","Send to Sentinel","Only Isolate device"],
+a:0,e:"Actions include Isolate device, Run AV scan, Initiate automated investigation, Restrict app execution, and Collect investigation package — but only when the query returns the required identifier columns for each action."},
+
+{id:14,cat:"automation",diff:"med",
+q:"You configure a custom detection rule to send emails to a distribution group. Where in the Defender portal do you configure this?",
+opts:["Email & collaboration settings","Microsoft Defender XDR settings","Microsoft 365 admin center Org settings","Exchange Online mail flow rules"],
+a:1,e:"Custom detection notification config lives under Microsoft Defender XDR settings, not Email & Collaboration (which is for mail-flow protection)."},
+
+{id:15,cat:"automation",diff:"hard",
+q:"Your custom IoC (file hash + IP + URL) shows status Inactive. You have not assigned an action. What is the minimum to activate?",
+opts:["Assign Allow or Block action","Configure a valid target (device group or all devices)","Enable EDR in block mode","Create custom threat intelligence policy"],
+a:1,e:"IoCs remain Inactive until a valid target is configured. Assigning an action alone won't activate them."},
+
+{id:16,cat:"automation",diff:"med",
+q:"Threat analytics email notifications are separate from which other rules?",
+opts:["From automation rules only","From alert notifications AND vulnerabilities notifications — all three are independent","From vulnerabilities only","From incident notifications only"],
+a:1,e:"Alert, Vulnerabilities, and Threat analytics are three independent email notification rules. Creating one does not affect the others."},
+
+{id:17,cat:"automation",diff:"hard",
+q:"A newly onboarded MDE device appears in the portal but reports no telemetry. Minimum admin effort to fix?",
+opts:["Reinstall the sensor","Reboot the device","From Configuration management → approve the device","Re-onboard using new script"],
+a:2,e:"Inactive devices must be approved from the Configuration management page. Reinstalling and re-onboarding is unnecessary."},
+
+{id:18,cat:"automation",diff:"med",
+q:"You need Copilot summaries and guided responses in the Defender portal (embedded experience). SCUs are licensed. What must be enabled?",
+opts:["Microsoft Defender XDR plugin in Security Copilot","Enable AIR for all device groups","Grant Copilot Contributor role","Onboard Sentinel to Defender portal"],
+a:0,e:"The Microsoft Defender XDR plugin in Security Copilot enables Copilot to invoke Defender XDR capabilities from the embedded experience. Without it, embedded features stay unavailable."},
+
+{id:19,cat:"automation",diff:"hard",
+q:"You want to auto-close Sentinel incidents from a lab IP range 10.20.30.0/24 forever, from Defender for Cloud alerts. Which artifact?",
+opts:["Sentinel automation rule to close","Defender for Cloud Suppression rule with IP filter","Firewall rule blocking traffic","Custom detection rule set to Informational"],
+a:1,e:"Defender for Cloud has its own Suppression rule feature. Sentinel automation rules cannot close Defender for Cloud alerts (Sentinel automation is for Sentinel incidents)."},
+
+{id:20,cat:"automation",diff:"med",
+q:"ASR (Attack Surface Reduction) rules block: (i) executable content in emails and (ii) unsigned USB processes. What is ASR classified as?",
+opts:["A threat protection feature that detects new malware","A rule set targeting specific software behaviors like script/executable launches","Data protection through app allow-listing","A file-based sandboxing capability"],
+a:1,e:"ASR provides rules to target specific software behaviors. Controlled folder access is app allow-listing; block-at-first-sight is detection; exploit protection targets exploit techniques."},
+
+{id:21,cat:"automation",diff:"hard",
+q:"An automation rule condition specifies Analytics rule name equals X and Severity equals High. What order do conditions/actions execute?",
+opts:["Actions run only if all conditions match; conditions are combined with AND","OR by default","Random order","Actions run first, then conditions"],
+a:0,e:"Automation rule conditions are AND'ed. Actions execute only if the entire condition set matches."},
+
+{id:22,cat:"automation",diff:"hard",
+q:"You have an alert-trigger playbook that runs on individual alerts. To migrate it to work with incidents, what must you change?",
+opts:["Delete and recreate as new playbook","Change the first step to 'When a Microsoft Sentinel Incident is triggered' (incident trigger)","Add an Automation Contributor role","Convert to a Function App"],
+a:1,e:"Change the trigger step to the Sentinel Incident trigger. Then wire it via an automation rule."},
+
+{id:23,cat:"automation",diff:"med",
+q:"A user is granted only Sentinel Responder. Can they manually run a playbook from the Actions dropdown?",
+opts:["Yes, Responder is enough","No, they also need Sentinel Playbook Operator (or equivalent)","Only if the playbook uses alert trigger","No, they need Owner"],
+a:1,e:"Responder can access incidents but requires Sentinel Playbook Operator (or Automation Contributor for higher tier) to trigger playbooks on incidents/alerts/entities."},
+
+{id:24,cat:"automation",diff:"hard",
+q:"Least privilege to add Workbooks in Sentinel?",
+opts:["Sentinel Contributor alone","Workbook Contributor (Azure Monitor role) + Sentinel Reader (or higher)","Owner","Log Analytics Contributor"],
+a:1,e:"Creating/deleting workbooks needs the Workbook Contributor Azure Monitor role combined with a Sentinel role (Reader is enough for accessing Sentinel; Contributor is stronger). Sentinel Contributor alone is not sufficient without Workbook Contributor."},
+
+{id:25,cat:"automation",diff:"hard",
+q:"You add an incident-trigger playbook. The playbook does not appear in the dropdown of an Automation rule 'Run playbook' action. Most likely cause?",
+opts:["Missing Sentinel Automation Contributor on the playbook's RG for Azure Security Insights","Playbook is disabled","No connectors are configured","Missing Playbook Operator role for you"],
+a:0,e:"Same root cause as manual run — Sentinel needs the Automation Contributor role on the playbook's RG for Azure Security Insights service principal."},
+
+{id:26,cat:"automation",diff:"med",
+q:"Which trigger type should a playbook use if you want to manually run it against a single entity (like a user)?",
+opts:["Incident trigger","Alert trigger","Entity trigger","Recurrence trigger"],
+a:2,e:"Entity trigger playbooks can be invoked from an entity's context page for on-demand actions."},
+
+{id:27,cat:"automation",diff:"hard",
+q:"An Automation Rule executes a Run Playbook action but throws 'Sentinel does not have permission to run playbook'. Fix at the least-privileged scope?",
+opts:["Grant Sentinel Automation Contributor to Azure Security Insights at the resource group of the playbook","Grant Owner on the subscription","Grant Logic App Contributor at the tenant","Grant Global Admin"],
+a:0,e:"Least-privilege fix is Automation Contributor on the *playbook's RG* (not the subscription, not the playbook itself)."},
+
+{id:28,cat:"automation",diff:"hard",
+q:"Enable EDR in block mode. What does it do?",
+opts:["Blocks all inbound network traffic","Uses behavioral blocking + containment based on post-breach EDR signals","Puts device in quarantine","Restricts device access to allow-list apps only"],
+a:1,e:"EDR in block mode uses behavioral blocking + containment when it observes post-breach malicious behaviors."},
+
+{id:29,cat:"automation",diff:"med",
+q:"Restrict correlation to within scoped device groups. What is the effect?",
+opts:["Alerts correlate only within their scoped device group instead of tenant-wide","Alerts are auto-closed if outside group","Only Global Admin can see cross-group alerts","No effect on incidents"],
+a:0,e:"With the setting on, incident correlation happens per scoped device group. Default is tenant-wide correlation."},
+
+{id:30,cat:"automation",diff:"hard",
+q:"You must automate isolation of a device during an ongoing multi-stage attack detected across Endpoint + Identity signals — with zero human intervention. Which mechanism?",
+opts:["Sentinel Fusion rule","Automatic attack disruption in Microsoft Defender XDR","AIR level = full remediation","Custom detection rule with Isolate action"],
+a:1,e:"Automatic attack disruption is Microsoft's XDR-native mechanism that decides in real time across MDE/MDI/Entra signals to isolate devices and disable accounts."},
+
+{id:31,cat:"automation",diff:"med",
+q:"Which of the following is NOT a supported action in a Defender XDR custom detection rule?",
+opts:["Isolate device","Run antivirus scan","Restrict app execution","Reboot device"],
+a:3,e:"Reboot is not a native custom-detection action. Isolation, AV scan, and app restriction are all supported when the required columns are present."},
+
+{id:32,cat:"automation",diff:"hard",
+q:"A playbook must post to Teams via application permissions. Best practice for authentication?",
+opts:["Store client secret in Logic App parameters","Use the Logic App's system-assigned managed identity with the needed Graph app permissions","Embed a service account password","Use a shared access signature"],
+a:1,e:"Managed identity is Microsoft's recommended approach — no secrets to manage, tied to the Logic App lifecycle, integrates with Azure RBAC/Graph app permissions."},
+
+{id:33,cat:"automation",diff:"hard",
+q:"Automation rule action ordering: which of these is legal?",
+opts:["Change severity, then tag, then run playbook, then change status — actions run in the order defined","Actions run in random order","Only one action allowed per rule","Actions run in parallel"],
+a:0,e:"Automation rule actions run in the defined order sequentially. You can order them via the wizard."},
+
+{id:34,cat:"automation",diff:"med",
+q:"Which of these Sentinel roles CAN edit analytics rules?",
+opts:["Sentinel Reader","Sentinel Responder","Sentinel Contributor","Sentinel Automation Contributor"],
+a:2,e:"Sentinel Contributor = create/edit analytics rules, workbooks, hunting queries in addition to Responder capabilities."},
+
+{id:35,cat:"automation",diff:"med",
+q:"Automation rule 'Change status' actions can set an incident to which values?",
+opts:["Only New/Active/Closed","New / Active / Closed (with a classification reason for Closed)","Only Closed","Any custom value"],
+a:1,e:"Change status supports New, Active, Closed — with classification/reason if closed."},
+
+{id:36,cat:"automation",diff:"hard",
+q:"You need an automation rule to only apply to incidents produced by a specific analytics rule. Configure which condition?",
+opts:["Incident title contains X","Analytics rule name equals X","Tactics equals Persistence","Provider equals Sentinel"],
+a:1,e:"Analytics rule name is the direct filter. Title-contains is fragile; provider is broad."},
+
+{id:37,cat:"automation",diff:"hard",
+q:"A playbook must run only on incidents whose Tactics include CredentialAccess. Where do you put this condition?",
+opts:["Inside the Logic App's condition action","In the automation rule's conditions (Tactics contains CredentialAccess)","In the analytics rule's entity mapping","In a Watchlist"],
+a:1,e:"Automation rules support Tactics as a condition — filter at the rule, not inside the playbook, so unrelated incidents don't invoke the Logic App at all."},
+
+{id:38,cat:"automation",diff:"med",
+q:"Playbook idempotency — best practice for actions that could run twice on the same incident?",
+opts:["Add a check-if-already-acted step at the top","Add retry policies to every action","Set the playbook to disabled after first use","Ignore duplicates"],
+a:0,e:"Automation rules can fire on incident creation and updates. Idempotency is preserved by checking existing tags/comments/state before acting."},
+
+{id:39,cat:"automation",diff:"hard",
+q:"You have 200 identical Defender for Cloud recommendation alerts for a lab subscription. Automation rule cannot close them. Correct approach?",
+opts:["Sentinel automation rule with Close incident","Use Defender for Cloud built-in Suppression rules with IP/subscription filter","Delete them manually","Move alerts to a bookmark"],
+a:1,e:"Defender for Cloud alerts must be suppressed by its built-in suppression rules — Sentinel automation rules cannot close DfC alerts."},
+
+{id:40,cat:"automation",diff:"med",
+q:"A playbook fails silently — no runs appear. First place to check?",
+opts:["Logic App run history","Automation rule run history in Sentinel","Both — automation rule history shows if it triggered; Logic App history shows execution details","Sentinel Content Hub"],
+a:2,e:"Check automation rule execution first (did it trigger?) then drill into the Logic App run to see step-level failures."},
+
+{id:41,cat:"automation",diff:"hard",
+q:"You need a Logic App to trigger when a new Sentinel incident is created AND when it's updated. Which trigger version supports this?",
+opts:["Alert trigger","Legacy incident-created trigger only","Current 'When a Microsoft Sentinel Incident is triggered' (supports create + update)","Recurrence"],
+a:2,e:"The current incident trigger supports both incident creation AND updates, so playbooks re-run on incident updates through the automation rule."},
+
+{id:42,cat:"automation",diff:"med",
+q:"Which of these should be automated with an AUTOMATION RULE (not a playbook)?",
+opts:["Send Teams notification","Query a REST API","Auto-close low-severity known false-positive incidents","Enrich entity with GeoIP data"],
+a:2,e:"Simple metadata manipulation (change status, add tags, assign owner) is best done directly in the automation rule — no Logic App needed."},
+
+{id:43,cat:"automation",diff:"hard",
+q:"NRT rule + playbook — the playbook must receive the full incident object with entities. Trigger?",
+opts:["Incident trigger","Alert trigger","Entity trigger","Recurrence"],
+a:0,e:"Incident trigger passes the incident object with entities and alerts. NRT rules generate incidents (with entity mapping) that flow to the incident trigger via automation rule."},
+
+{id:44,cat:"automation",diff:"med",
+q:"Sentinel Playbook Operator role permits which actions?",
+opts:["Manually trigger playbooks on incidents, alerts, and entities","Create playbooks","Edit analytics rules","Delete incidents"],
+a:0,e:"Playbook Operator is a specific role for manual playbook execution. It does not include create/edit capabilities."},
+
+{id:45,cat:"automation",diff:"hard",
+q:"An automation rule with a Run playbook action fails with 'Playbook name unavailable'. What is the fix, and where do you apply it?",
+opts:["Grant Sentinel Automation Contributor to Azure Security Insights on the RG containing the playbook","Restart the Logic App","Recreate the analytics rule","Grant the user Logic App Contributor"],
+a:0,e:"The 'unavailable' state means Sentinel (Azure Security Insights) lacks permission on the playbook's RG."},
+
+{id:46,cat:"automation",diff:"med",
+q:"You want to tag every incident whose alert product source is Microsoft Defender for Cloud Apps with tag 'MDCA'. Simplest approach?",
+opts:["Playbook","Automation rule with 'Alert product name equals MDCA' condition and 'Add tags' action","Custom detection rule","Sentinel workbook"],
+a:1,e:"Automation rule handles this without needing a Logic App. Add tags is a first-class automation action."},
+
+{id:47,cat:"automation",diff:"hard",
+q:"You need a playbook to include entity-triggered runs from Sentinel — running on a single IP as needed. Requirement for the playbook?",
+opts:["Use the alert trigger","Use the entity trigger and configure the entity type (IP/User/Host/etc.)","Use recurrence trigger","Use HTTP trigger"],
+a:1,e:"Entity-triggered playbooks specify which entity type they accept. This makes them selectable from the entity's investigation page."},
+
+{id:48,cat:"automation",diff:"med",
+q:"Which is the correct order to migrate an alert-trigger playbook to work from automation rules?",
+opts:["Convert playbook to incident trigger → create automation rule with Run playbook","Keep alert trigger → create automation rule","Delete existing → build fresh","No migration needed"],
+a:0,e:"Convert the trigger first, then wire the automation rule. Microsoft has published guidance for this migration."},
+
+{id:49,cat:"automation",diff:"hard",
+q:"An automation rule with 'When a Microsoft Sentinel incident is updated' trigger — which change triggers it?",
+opts:["Only status changes","Any update including tags, owner, severity, status, comments","Only severity changes","Only closure"],
+a:1,e:"Update trigger fires on any incident update — status, owner, tags, severity, comments. Design idempotent playbooks accordingly."},
+
+{id:50,cat:"automation",diff:"hard",
+q:"An automation rule with a 60-day expiration ensures what?",
+opts:["Rule stops evaluating incidents 60 days after creation date","Incidents older than 60 days are auto-closed","Playbook runs are retained 60 days","No effect on evaluation"],
+a:0,e:"Rule expiration disables evaluation after the set date. Useful for time-boxed campaigns or maintenance windows."},
+
+/* ============  RESPOND TO ALERTS IN DEFENDER XDR — 40 Qs  ============ */
+{id:51,cat:"respond-xdr",diff:"hard",
+q:"Defender for Identity alert: repeated NTLM auth from an unknown IP for CONTOSO\\hrsvc. Activity is ongoing. IMMEDIATELY prevent on-prem resource access.",
+opts:["Revoke session for hrsvc","Reset hrsvc password","Disable the CONTOSO\\hrsvc account","Mark account as compromised"],
+a:2,e:"Disable prevents ALL new authentications. Revoke session only ends existing sessions and won't stop next NTLM attempt. Reset password requires the user to change it and takes time. 'Mark compromised' is just a flag."},
+
+{id:52,cat:"respond-xdr",diff:"hard",
+q:"Insider Risk Management alerts don't surface in Defender XDR. Fix first?",
+opts:["Create a custom detection in Advanced Hunting","In Purview Insider Risk → enable Share user risk details with other security solutions","Enable Defender for Cloud Apps app governance","Filter incident queue by Service source"],
+a:1,e:"The Share user risk details toggle is what wires Insider Risk alerts to Defender XDR as incidents filterable by Service source."},
+
+{id:53,cat:"respond-xdr",diff:"hard",
+q:"Confirmed compromised user (hybrid Entra). You need to remediate identity risk AND require strong reauth.",
+opts:["Reset password only","Reset the user's MFA registration","Create a CA policy that blocks the user","Dismiss the user risk"],
+a:1,e:"Resetting MFA registration forces the user to re-register with strong authentication before regaining access — this remediates the risk state properly."},
+
+{id:54,cat:"respond-xdr",diff:"med",
+q:"In an incident graph, notepad.exe on DeviceA connects to an external IP. Open the IP entity details from the incident.",
+opts:["Change incident status to In Progress","Click the external IP in the alert process tree","Approve remediation in Action center","Filter incident queue by IP"],
+a:1,e:"The process tree is interactive. Clicking any entity (IP, user, file) opens its entity details page."},
+
+{id:55,cat:"respond-xdr",diff:"hard",
+q:"Blast radius view is greyed out on the compromised-device node in an incident. Fix?",
+opts:["Enable UEBA in Sentinel","Enable Defender for Cloud Apps session policies","Onboard the tenant to Microsoft Sentinel data lake (Sentinel Graph)","Run a Go Hunt query first"],
+a:2,e:"Blast Radius depends on Sentinel Graph, which is enabled by configuring Sentinel to use the data lake tier."},
+
+{id:56,cat:"respond-xdr",diff:"hard",
+q:"Sentinel Graph shows the same person as two nodes — one identifier is UPN, another is sAMAccountName. Fix?",
+opts:["Rewrite each rule to normalize with iff()","Sync user entities with Microsoft Entra ID","Create a lookup table via watchlist","Enable ASIM parser"],
+a:1,e:"Syncing user entities with Entra ID enables Sentinel Graph to resolve different identifier formats to the same identity node."},
+
+{id:57,cat:"respond-xdr",diff:"med",
+q:"Defender for Cloud AKS alert with manual remediation steps. Automate remediation.",
+opts:["Sentinel automation rule","Azure Logic App triggered on the DfC alert","Custom detection in Advanced Hunting","Fusion rule"],
+a:1,e:"A Logic App triggered by the DfC alert can execute the required response actions automatically. Sentinel automation rules cannot close DfC alerts."},
+
+{id:58,cat:"respond-xdr",diff:"med",
+q:"Format of Defender for Identity detailed alert report?",
+opts:["JSON","PDF","XLSX (Excel)","STIX 2.1"],
+a:2,e:"Each MDI alert includes an XLSX (Excel) download containing the detailed report for analysis."},
+
+{id:59,cat:"respond-xdr",diff:"med",
+q:"Review most recent actions on Device1 with minimum admin effort. Which portal element?",
+opts:["Incidents queue","Advanced hunting","Device page → Timeline","Action center"],
+a:2,e:"Timeline on the device page shows chronological device activity including actions taken — fastest single-device history."},
+
+{id:60,cat:"respond-xdr",diff:"hard",
+q:"You must analyze memory + processes + network on a device with minimum user impact and no false-positive misclassification.",
+opts:["Isolate the device first","Automated investigation","Collect investigation package","Run AV scan"],
+a:2,e:"Collect investigation package gathers forensic artifacts without disrupting the user or running AIR which could over-remediate benign artifacts."},
+
+{id:61,cat:"respond-xdr",diff:"med",
+q:"Analyze an unfamiliar file inside Defender for Endpoint AND ensure it seeds future detections. Two actions:",
+opts:["Submit for deep analysis AND add the file as an indicator","Report as false positive AND add hash to Sentinel entity","Isolate device AND deep analysis","Go hunt AND deep analysis"],
+a:0,e:"Deep analysis detonates in sandbox for behavioral report; adding as indicator ensures the hash triggers detections/blocks going forward."},
+
+{id:62,cat:"respond-xdr",diff:"hard",
+q:"Create a clean breach timeline: highlight key events, show only those, restrict to before the flagged event.",
+opts:["Export timeline to Excel","Flag events → enable Only Flagged filter → use time bar to show before the flagged event","Add Investigation Package bookmark","Use Related events pivot"],
+a:1,e:"Flag events, filter to Only Flagged, and set the time bar before the flagged event — this creates a clean interactive breach timeline in the device Timeline."},
+
+{id:63,cat:"respond-xdr",diff:"hard",
+q:"Identify the scope of an incident across mixed Windows 11 + macOS devices. Best portal tool?",
+opts:["Automated investigation","Device inventory","Deep analysis","Advanced hunting"],
+a:3,e:"Advanced hunting runs KQL across Defender telemetry to determine which devices/users/processes are in scope. Device inventory just lists assets."},
+
+{id:64,cat:"respond-xdr",diff:"med",
+q:"Identify the user who signed in interactively to a compromised device during the attack. Fastest path?",
+opts:["Query IdentityInfo in Advanced Hunting","Device Timeline","Threat intelligence tab","Incident queue filter"],
+a:1,e:"Timeline shows interactive sign-ins along with process/network events on a per-device basis."},
+
+{id:65,cat:"respond-xdr",diff:"med",
+q:"Which Defender XDR feature deploys decoy files/credentials/processes/shares on endpoints?",
+opts:["Defender for Identity honeytoken","Defender for Endpoint deception rules","Defender for Cloud Apps session policies","Purview labels"],
+a:1,e:"Deception rules are a Defender for Endpoint feature. Defender for Identity has honeytoken *accounts*, which are different."},
+
+{id:66,cat:"respond-xdr",diff:"med",
+q:"You must remotely analyze a suspicious process (interactive session with commands).",
+opts:["Advanced hunting","Live response","Deep analysis","Threat analytics"],
+a:1,e:"Live response opens an interactive remote shell with a curated command set (getfile, run, putfile, analyze, etc.)."},
+
+{id:67,cat:"respond-xdr",diff:"hard",
+q:"An analyst has Security Reader in Entra + Security Reader in M365 group. Can they modify Defender XDR security settings?",
+opts:["Yes","No — Security Reader is read-only; need Security Administrator or Global Administrator","Yes with device-group scoping","Only for their own group"],
+a:1,e:"Security Reader is strictly read-only. Security Administrator (Entra) or Global Administrator can modify Defender XDR settings."},
+
+{id:68,cat:"respond-xdr",diff:"hard",
+q:"Automatic attack disruption disables an account — what service coordinates this action?",
+opts:["Sentinel automation rule","Automatic attack disruption engine (XDR-native, integrating MDE + MDI + Entra)","Conditional Access","Custom detection with Isolate device"],
+a:1,e:"Attack Disruption is an XDR-native engine coordinating decisions across Endpoint, Identity, and Entra signals in real time."},
+
+{id:69,cat:"respond-xdr",diff:"med",
+q:"Full attack story for a multi-stage, multi-domain, lateral-movement attack. Best portal view?",
+opts:["Alert queue","Device inventory","Incident graph + attack story view","Custom detection rules"],
+a:2,e:"The incident graph aggregates entities, alerts, evidence, and timeline into an attack story."},
+
+{id:70,cat:"respond-xdr",diff:"hard",
+q:"You need to case-manage 5 related incidents together — the new case management feature. Where?",
+opts:["Only Sentinel workbook","Unified Defender portal — Case management for incidents (new)","Purview eDiscovery case","Azure DevOps"],
+a:1,e:"The unified Defender portal introduced case management for grouping and managing related incidents."},
+
+{id:71,cat:"respond-xdr",diff:"hard",
+q:"Which Defender for Cloud workload protection alert can Sentinel automation rules NOT close?",
+opts:["Container runtime alerts","Storage account alerts","Any DfC alert — Sentinel automation cannot close DfC alerts","Only VM alerts"],
+a:2,e:"Sentinel automation rules manage Sentinel incidents only. DfC alerts require DfC's own suppression/logic apps."},
+
+{id:72,cat:"respond-xdr",diff:"med",
+q:"You need to view a chronological list of events on device WS-23 for a custom time range.",
+opts:["Alerts tab","Advanced hunting","Timeline tab with custom time range","Collect investigation package"],
+a:2,e:"Timeline supports custom time range on the calendar control. Alerts tab shows alerts only; hunting requires KQL."},
+
+{id:73,cat:"respond-xdr",diff:"hard",
+q:"You suspect an attacker enabled MDE Troubleshooting Mode on macOS to modify policy-locked settings. Hunt with which ActionType?",
+opts:["DeviceTamperProtectionDisabled","AntivirusTroubleshootModeEvent","TamperProtectionModified","MdeTroubleshootStart"],
+a:1,e:"ActionType == 'AntivirusTroubleshootModeEvent' captures MDE troubleshoot-mode state changes on macOS."},
+
+{id:74,cat:"respond-xdr",diff:"hard",
+q:"Live Response works but you need a persistent forensic snapshot for archive. What supplements Live Response?",
+opts:["Collect investigation package (pre-defined artifacts ZIP)","Isolate device","Deep analysis","Advanced Hunting export"],
+a:0,e:"Collect investigation package gathers processes, connections, scheduled tasks, autoruns — as a downloadable ZIP for offline analysis."},
+
+{id:75,cat:"respond-xdr",diff:"med",
+q:"You submit a file for Deep Analysis. What does Microsoft do with it?",
+opts:["Emails the analyst","Detonates in Microsoft's cloud sandbox and returns a behavioral report","Deletes it","Adds to global block list"],
+a:1,e:"Deep analysis runs the file in Microsoft's sandbox and returns a detailed behavioral report."},
+
+{id:76,cat:"respond-xdr",diff:"hard",
+q:"Which is NOT a supported remediation action from Defender for Identity in the Defender portal?",
+opts:["Disable account","Reset password","Confirm compromised","Set account risk to High (custom score)"],
+a:3,e:"Set account risk to High is not an MDI remediation action. Disable, reset password, and confirm-compromised are valid MDI response actions."},
+
+{id:77,cat:"respond-xdr",diff:"med",
+q:"Which Defender XDR service integrates DLP alerts into unified incidents?",
+opts:["Only Purview shows DLP alerts","Defender portal shows DLP incidents alongside identity/device/mail","Only Purview and Sentinel","Only Sentinel"],
+a:1,e:"Purview DLP alerts are integrated into the Defender portal incident view for unified response."},
+
+{id:78,cat:"respond-xdr",diff:"hard",
+q:"Defender for Cloud Apps: block a risky OAuth app that gained excessive permissions. Where?",
+opts:["Purview eDiscovery","Defender for Cloud Apps → OAuth app governance → Ban","Entra ID Conditional Access","Sentinel workbook"],
+a:1,e:"OAuth app governance in Defender for Cloud Apps lets you ban/permit risky OAuth apps and revoke tokens."},
+
+{id:79,cat:"respond-xdr",diff:"hard",
+q:"After a phishing incident, revoke every access token issued to a compromised user. Best action?",
+opts:["Reset password","Revoke sessions (Entra ID) — invalidates refresh tokens","Disable account","Reset MFA"],
+a:1,e:"Revoke sessions invalidates refresh tokens across services. Combine with password reset + MFA reset for full remediation."},
+
+{id:80,cat:"respond-xdr",diff:"med",
+q:"An incident includes a DLP alert. Where do analysts view DLP details?",
+opts:["Only Purview","In the incident's Alert timeline within the Defender portal","Only in Sentinel","M365 admin center"],
+a:1,e:"DLP alerts flow into Defender XDR incidents; analysts can pivot to Purview for policy details, but the incident view surfaces them."},
+
+{id:81,cat:"respond-xdr",diff:"hard",
+q:"You want AIR to fully remediate malicious artifacts without approval. Configure what?",
+opts:["Set automation level = Full (Automated) for the device group","Set automation level = Semi","Disable AIR","Only Live Response"],
+a:0,e:"Full automation level lets AIR complete remediation without analyst approval. Semi-automation requires approval on some actions."},
+
+{id:82,cat:"respond-xdr",diff:"hard",
+q:"An incident's alerts span EmailEvents + DeviceEvents + IdentityLogonEvents. This is a multi-domain attack. Best investigation surface?",
+opts:["Advanced hunting only","Defender XDR unified incident view with attack story + evidence","Sentinel workbook","Threat analytics"],
+a:1,e:"Defender XDR's unified incident view correlates alerts across email/identity/device and shows the attack story graph."},
+
+{id:83,cat:"respond-xdr",diff:"med",
+q:"Which built-in report lists all changes to Domain Admins group?",
+opts:["Entra ID Sensitive Operations workbook","Defender for Identity Modifications to sensitive groups report","MDCA Cloud Discovery dashboard","Entra Provisioning Analysis workbook"],
+a:1,e:"MDI's Modifications to sensitive groups report is authoritative for admin/sensitive group modifications."},
+
+{id:84,cat:"respond-xdr",diff:"hard",
+q:"An Entra ID risky user has performed a secured password reset in the last 14 days. Which report filters by this?",
+opts:["Risky sign-ins report","Risky users report — filter Risk detail = User performed secured password reset","Sensitive Operations workbook","Sign-in logs"],
+a:1,e:"Risky users report has a Risk detail filter that includes 'User performed secured password reset'."},
+
+{id:85,cat:"respond-xdr",diff:"med",
+q:"Investigate an incident with embedded Copilot. Copilot answers with generic content only. Root cause?",
+opts:["Missing Defender XDR plugin in Security Copilot","No SCUs","Session timed out","No incident selected"],
+a:0,e:"The Defender XDR plugin must be enabled in Copilot for it to invoke Defender-specific capabilities from the embedded experience."},
+
+{id:86,cat:"respond-xdr",diff:"hard",
+q:"You suspect a rogue OAuth app is exfiltrating mail via Graph API. Which service shows OAuth app risk score?",
+opts:["Sentinel workbook only","Defender for Cloud Apps app governance","Purview eDiscovery","Entra Enterprise applications only"],
+a:1,e:"App governance in Defender for Cloud Apps computes OAuth app risk scores and provides visibility + response."},
+
+{id:87,cat:"respond-xdr",diff:"hard",
+q:"Auto-remediation is enabled. Defender blocks malware and notifies you. Analyze memory + processes + network safely.",
+opts:["Isolate the device first","Collect investigation package first — safest, no user impact","Automated investigation","Run AV scan"],
+a:1,e:"Collect investigation package is minimally invasive and captures memory/processes/network state. Isolation disrupts the user."},
+
+{id:88,cat:"respond-xdr",diff:"med",
+q:"Manage a security incident's lifecycle (assign owner, add comments, classify closure). Least-privilege role?",
+opts:["Sentinel Reader","Sentinel Responder","Sentinel Contributor","Owner"],
+a:1,e:"Responder is the least-privilege role that can manage incident lifecycle (assign, dismiss, comment)."},
+
+{id:89,cat:"respond-xdr",diff:"hard",
+q:"During investigation, embedded Copilot for Security should summarize a Defender XDR incident. Requirements?",
+opts:["Copilot SCU capacity + Defender XDR plugin enabled + user has Copilot access","Only Global Admin","Only SCU","Nothing extra"],
+a:0,e:"Copilot requires SCUs provisioned, plugin enabled in Copilot, and the user must be assigned Copilot capabilities."},
+
+{id:90,cat:"respond-xdr",diff:"med",
+q:"AIR generates a remediation action awaiting approval. Where do you approve?",
+opts:["Alert page","Action center → Pending","Advanced hunting","Custom detection rules"],
+a:1,e:"Action center → Pending shows AIR remediation actions awaiting approval or already completed."},
+
+/* ============  RESPOND TO ALERTS IN DEFENDER FOR ENDPOINT — 30 Qs  ============ */
+{id:91,cat:"mde",diff:"med",
+q:"Which endpoint OSes can be onboarded to Defender for Endpoint?",
+opts:["Windows only","Windows client/server, macOS, Linux server, iOS, Android","Windows + macOS only","Only managed devices via Intune"],
+a:1,e:"MDE supports Windows client, Windows Server, macOS, Linux Server, iOS, and Android."},
+
+{id:92,cat:"mde",diff:"hard",
+q:"Block executable content from email messages AND unsigned processes from USB drives. Which MDE capability?",
+opts:["Controlled Folder Access","Attack Surface Reduction (ASR)","Exploit Protection","EDR in block mode"],
+a:1,e:"ASR provides rules targeting specific software behaviors — email executables, USB unsigned processes, credential theft, etc."},
+
+{id:93,cat:"mde",diff:"hard",
+q:"Block specific IP addresses and URLs at the endpoint. Which advanced feature?",
+opts:["Custom network indicators","Web content filtering","Restrict correlation","EDR in block mode"],
+a:0,e:"Custom network indicators allow/block by IP/domain/URL. Web content filtering blocks by category."},
+
+{id:94,cat:"mde",diff:"med",
+q:"App1 was incorrectly blocked. Unblock it, ensure it stays unblocked, but keep other malicious files blocked.",
+opts:["Edit the Tenant Allow/Block List","Custom quarantine policy","Critical asset classification","Turn off tamper protection"],
+a:0,e:"Tenant Allow/Block List explicitly allows the specific file so it won't be flagged again, while other files continue normal detection."},
+
+{id:95,cat:"mde",diff:"med",
+q:"Defender for Endpoint provides sandbox detonation reports via which capability?",
+opts:["Live response","Deep analysis (Submit for)","Investigation package","Timeline export"],
+a:1,e:"Deep analysis submits the file to Microsoft's cloud sandbox and returns a behavioral analysis report."},
+
+{id:96,cat:"mde",diff:"hard",
+q:"A file has NOT been observed previously in your org. Analyze in MDE AND seed future detections.",
+opts:["Submit for deep analysis + add file as indicator","Isolate device + timeline review","Add hash to Sentinel entity","Overview tab review"],
+a:0,e:"Deep analysis (behavioral) + adding as indicator (persistent detection/block by hash) covers analysis and future coverage."},
+
+{id:97,cat:"mde",diff:"hard",
+q:"Take a snapshot of the current state of Device1 WITHOUT initiating Live Response.",
+opts:["Turn on troubleshooting mode","Select Collect investigation package","Run mpcmdrun.exe -GetFiles","Device inventory CSV"],
+a:1,e:"Collect investigation package produces a ZIP with processes, connections, scheduled tasks, autoruns — snapshot without a Live Response session."},
+
+{id:98,cat:"mde",diff:"hard",
+q:"View chronological events on WS-23 for a custom time range.",
+opts:["Alerts tab","Timeline tab (custom range)","Investigation package","Advanced hunting"],
+a:1,e:"Timeline tab supports selecting a custom time range via the calendar. Advanced hunting is cross-device KQL."},
+
+{id:99,cat:"mde",diff:"med",
+q:"Highlights key device events, displays only highlighted events, restricts to events BEFORE the highlighted event.",
+opts:["Export timeline","Flag key events + Only Flagged filter + time bar before flag","Add bookmark","Run KQL query"],
+a:1,e:"Timeline's Flag + Only Flagged filter + time bar creates the clean breach timeline pattern."},
+
+{id:100,cat:"mde",diff:"hard",
+q:"Identify who signed in interactively to a device during the attack timeframe.",
+opts:["IdentityInfo table via KQL","Device Timeline shows interactive sign-ins","Threat intelligence tab","Alerts queue"],
+a:1,e:"Device Timeline includes interactive user sign-ins as chronological events on the device page."},
+
+{id:101,cat:"mde",diff:"hard",
+q:"A process on Device1 communicates with a known C2 server. Remotely analyze the process interactively.",
+opts:["Advanced hunting","Live response","Deep analysis","Threat analytics"],
+a:1,e:"Live response allows remote command execution — inspect running processes, collect artifacts, run investigation commands."},
+
+{id:102,cat:"mde",diff:"med",
+q:"Select the external IP in the alert process tree — what happens?",
+opts:["Marks alert as resolved","Opens the IP entity details page for investigation","Filters incident queue","Blocks the IP tenant-wide"],
+a:1,e:"Clicking any entity in the process tree opens its entity details page."},
+
+{id:103,cat:"mde",diff:"med",
+q:"Which is NOT part of the Collect investigation package output?",
+opts:["Running processes","Network connections","Scheduled tasks","Full memory dump of every process"],
+a:3,e:"Package captures curated artifacts (processes, connections, autoruns, prefetch, etc.). Full memory dumps require Live Response."},
+
+{id:104,cat:"mde",diff:"med",
+q:"Turn on Defender for Endpoint troubleshooting mode. Purpose?",
+opts:["Collects forensic artifacts","Temporarily relaxes antivirus protections for diagnostics","Isolates device from network","Enables Live Response"],
+a:1,e:"Troubleshooting mode temporarily relaxes AV protections for diagnostics (e.g., resolving false positives) — NOT for forensics."},
+
+{id:105,cat:"mde",diff:"hard",
+q:"Suppress a specific alert type from a known-benign process, but keep other alerts.",
+opts:["AIR level = Full","Suppression rule scoped by alert title + IoC + conditions","Custom detection = Informational","Global exclusion"],
+a:1,e:"Suppression rules scope by title, IoC, and conditions. AIR affects investigation flow, not alert generation."},
+
+{id:106,cat:"mde",diff:"med",
+q:"Configure a rule to send email notifications when a brute-force alert fires on a specific device group.",
+opts:["Which users to notify AND the device group","Only device group","Only alert severity","Sentinel automation rule"],
+a:0,e:"Alert notification rules must specify recipients AND device group scope."},
+
+{id:107,cat:"mde",diff:"med",
+q:"Devices appear in the portal but do not report alerts. Least admin effort to fix?",
+opts:["Reinstall sensor","Approve devices from Configuration management","Reboot devices","Change device tag"],
+a:1,e:"New devices sometimes remain inactive until approved on the Configuration management page."},
+
+{id:108,cat:"mde",diff:"hard",
+q:"A custom IoC (hash + IP + URL) is Inactive. Configure the MINIMUM to activate.",
+opts:["Assign an action (Allow/Block)","Assign a valid target (device groups or all devices)","Enable EDR block mode","Add threat intel policy"],
+a:1,e:"IoCs need a valid target to become Active. Actions alone are not sufficient."},
+
+{id:109,cat:"mde",diff:"hard",
+q:"You need MDE to notify you about new/updated threat analytics. Which type of notification rule?",
+opts:["Alert email notification rule","Vulnerabilities email notification rule","Threat analytics email notification rule (separate from alerts and vulnerabilities)","Sentinel automation rule"],
+a:2,e:"Threat analytics has its own notification rule under the Threat analytics tab in the Defender portal."},
+
+{id:110,cat:"mde",diff:"hard",
+q:"Configure custom data collection in MDE — what does this cover?",
+opts:["Additional Windows event logs collection","Custom process memory dumps","AIR remediation actions","Automated investigation results"],
+a:0,e:"Custom data collection allows additional Windows event logs to be sent to MDE (beyond the default schema)."},
+
+{id:111,cat:"mde",diff:"hard",
+q:"MDE Live Response session commands include which of the following?",
+opts:["getfile, run, putfile, analyze, remediate","Only get_file","gpupdate, ipconfig, dir","Standard bash commands"],
+a:0,e:"MDE Live Response provides curated commands: getfile, putfile, run (a script), analyze, remediate, undo, and file system navigation."},
+
+{id:112,cat:"mde",diff:"med",
+q:"Live response scripts can be uploaded to which library for reuse?",
+opts:["Library — endpoint scripts uploaded and versioned via portal","Advanced hunting","Sentinel Watchlist","Threat analytics"],
+a:0,e:"MDE portal includes a Live Response library for uploaded scripts (PowerShell/PS/bash), which can be reused during sessions."},
+
+{id:113,cat:"mde",diff:"hard",
+q:"AIR is generating too many low-severity remediations. Reduce AIR volume without blinding to threats.",
+opts:["Adjust automation level per device group (e.g., Semi for lower-risk groups)","Disable AIR globally","Enable EDR block mode","Isolate all devices"],
+a:0,e:"AIR automation level can be tuned per device group — Full, Semi-automatic (approval needed), or No automation."},
+
+{id:114,cat:"mde",diff:"med",
+q:"Which MDE capability blocks malware within seconds via cloud-delivered detonation?",
+opts:["Block at First Sight (BAFS)","Controlled Folder Access","Exploit Protection","EDR in block mode"],
+a:0,e:"Block at First Sight uses cloud protection to block new malware within seconds."},
+
+{id:115,cat:"mde",diff:"med",
+q:"Which MDE feature protects data by checking apps against a list of trusted apps?",
+opts:["Controlled Folder Access","ASR","Exploit Protection","EDR in block mode"],
+a:0,e:"Controlled Folder Access (CFA) protects folders by allow-listing trusted apps that can modify them — mitigates ransomware."},
+
+{id:116,cat:"mde",diff:"hard",
+q:"Exploit Protection targets which threat class?",
+opts:["Malware using exploits to infect and spread","USB threats","Email attachments","Phishing"],
+a:0,e:"Exploit Protection mitigates exploit techniques (ASLR, DEP, CFG, EAF, etc.) — targeting malware that uses exploits."},
+
+{id:117,cat:"mde",diff:"med",
+q:"Device groups in MDE serve which purposes?",
+opts:["Only visual grouping","RBAC scoping AND automation level assignment AND policy scoping","Only automation level","Only reporting"],
+a:1,e:"Device groups scope RBAC access, automation levels, and policy assignments."},
+
+{id:118,cat:"mde",diff:"hard",
+q:"An MDE Custom Detection rule requires which minimum columns to enable Isolate device action?",
+opts:["Timestamp + ReportId","Timestamp + ReportId + DeviceId","Just DeviceId","Just Timestamp"],
+a:1,e:"Isolate device action requires the query to return DeviceId in addition to the base required columns (Timestamp + ReportId)."},
+
+{id:119,cat:"mde",diff:"med",
+q:"You want MDE to auto-restrict app execution for a hunting query result. Which columns must the query return?",
+opts:["DeviceId + Timestamp + ReportId","+ InitiatingProcessSHA1 or SHA256 (file hash column)","Only DeviceId","Only Timestamp"],
+a:1,e:"App restriction actions require the file hash column (SHA1/SHA256) in addition to DeviceId+Timestamp+ReportId."},
+
+{id:120,cat:"mde",diff:"hard",
+q:"A custom detection rule frequency options are:",
+opts:["Only Continuous","Every 24h / 12h / 3h / 1h / Continuous (as available)","Only 1h","Only weekly"],
+a:1,e:"Custom detection rules can run at intervals: continuous, 1h, 3h, 12h, 24h — depending on frequency support."},
+
+/* ============  INVESTIGATE M365 (Purview / audit / graph) — 25 Qs  ============ */
+{id:121,cat:"purview",diff:"hard",
+q:"Standard Purview Audit search returns 80,000 rows. Export CSV of ALL rows. Cannot upgrade to Premium.",
+opts:["Duplicate the search job and export each copy","Refine search into smaller time ranges and export each CSV","Search-UnifiedAuditLog in EXO PS","Configure Audit Premium retention policy"],
+a:1,e:"Standard export limit is 50,000 records. Split into smaller time ranges and export each as a separate CSV."},
+
+{id:122,cat:"purview",diff:"hard",
+q:"Retain Entra + Exchange audit records for ≥ 1 year. Currently Audit Standard.",
+opts:["Search-UnifiedAuditLog","Office 365 Management Activity API","Audit (Premium)","Sentinel archival"],
+a:2,e:"Audit Premium provides 1-year retention on Entra + Exchange + SharePoint + OneDrive (default). Standard retains 180 days."},
+
+{id:123,cat:"purview",diff:"hard",
+q:"eDiscovery search fails with CS007. Wildcard-heavy keywords across many custodians + SharePoint sites.",
+opts:["Split the search into smaller ones by custodians/locations/date","Rebuild SharePoint search index","Remove duplicate mailbox objects","Enable Advanced eDiscovery"],
+a:0,e:"CS007 means the search is too complex. Split scope (custodians, locations, date ranges)."},
+
+{id:124,cat:"purview",diff:"hard",
+q:"Correlate all Graph API calls made by the same access token as a suspicious sign-in (identified by UTI).",
+opts:["SessionId","OperationId","ClientRequestId","SignInActivityId"],
+a:3,e:"SignInActivityId links Graph activity log entries to the sign-in event and its token identifiers (UTI)."},
+
+{id:125,cat:"purview",diff:"hard",
+q:"Top-20 identities with failed authz to /groups over 3 days. Which where clause is correct?",
+opts:["ResponseStatusCode == 429","ResponseStatusCode == 401 or ResponseStatusCode == 403","ResponseStatusCode >= 500","ResultType != '0'"],
+a:1,e:"401 = unauthorized, 403 = forbidden. Both are authorization failures. 429 = throttling; 5xx = server error."},
+
+{id:126,cat:"purview",diff:"med",
+q:"Which audit log record type captures Defender XDR AIR activity?",
+opts:["AirInvestigation","ExchangeAdmin","AzureActiveDirectory","SecurityComplianceCenterEOPCmdlet"],
+a:0,e:"AirInvestigation record type contains Defender XDR AIR activity in the unified audit log."},
+
+{id:127,cat:"purview",diff:"med",
+q:"Identify whether User1 signed in AND shared a OneDrive doc in the last 30 days.",
+opts:["Entra sign-in logs","Purview portal (unified audit log)","Defender portal","Azure portal"],
+a:1,e:"Purview UAL records both sign-ins and workload actions like OneDrive sharing."},
+
+{id:128,cat:"purview",diff:"med",
+q:"Detect a departing user downloading many docs 90 days before deletion.",
+opts:["Insider risk management policy (Data theft by departing users)","DLP on SharePoint","Defender for Cloud Apps file policy","Alert policy"],
+a:0,e:"Insider Risk 'Data theft by departing users' template detects exfiltration indicators up to 90 days before departure."},
+
+{id:129,cat:"purview",diff:"med",
+q:"DLP alerts — which TWO portals can review them?",
+opts:["Purview portal","Defender portal","SharePoint admin center","M365 admin center"],
+a:1,e:"Both Purview and Defender portals can review DLP alerts. (First correct answer alphabetically; both A and B are the answer — pick both if multi-select.) In this quiz, either Purview or Defender is correct; the point is not SharePoint/M365 admin centers."},
+
+{id:130,cat:"purview",diff:"hard",
+q:"External user accessed a confidential SPO doc. Identify who + what actions. First step?",
+opts:["Purview portal → Audit log search","eDiscovery Content Search","Get-SimpleAuditLogReport","Query Sentinel SecurityEvent"],
+a:0,e:"Purview audit log search records SPO access by external users, including specific actions performed."},
+
+{id:131,cat:"purview",diff:"hard",
+q:"Modifications to Domain Admins group. Best report?",
+opts:["Entra Sensitive Operations workbook","Defender for Identity Modifications to sensitive groups report","MDCA Cloud Discovery","Entra Provisioning Analysis"],
+a:1,e:"MDI's Modifications to sensitive groups report authoritatively lists sensitive group modifications, including Domain Admins."},
+
+{id:132,cat:"purview",diff:"hard",
+q:"A user performed unauthorized actions via an Entra-registered app. Identify actions performed:",
+opts:["Entra Sign-in logs","Entra Audit logs","Purview Audit log","Defender for Cloud Apps"],
+a:2,e:"Purview Audit log records detailed workload activity, including actions by Entra-registered apps. Entra audit logs cover directory changes, not workload actions."},
+
+{id:133,cat:"purview",diff:"med",
+q:"Who can search Purview audit logs?",
+opts:["Global Admin, Security Admin, Exchange Admin (with Audit Logs role)","Only Global Admin","Only Compliance Admin","Any user"],
+a:0,e:"Global Admin, Security Admin, and Exchange Admin (with Audit Logs role assigned) can search unified audit logs."},
+
+{id:134,cat:"purview",diff:"med",
+q:"Which Entra ID Protection role CANNOT see Risky sign-ins report?",
+opts:["Security Reader","Security Operator","Security Administrator","Global Reader"],
+a:1,e:"Security Operator role has restrictions and cannot access the Risky sign-ins report."},
+
+{id:135,cat:"purview",diff:"med",
+q:"Risky users report supports filtering by:",
+opts:["Sign-in country only","Client app","Risk detail (e.g., User performed secured password reset)","Device compliance"],
+a:2,e:"Risky users has a Risk detail filter with values like User performed secured password reset."},
+
+{id:136,cat:"purview",diff:"med",
+q:"Which license enables Microsoft Entra ID Protection?",
+opts:["Entra ID Free","Entra ID Premium P1","Entra ID Premium P2","Any Business Premium"],
+a:2,e:"Entra ID Protection requires Entra ID Premium P2."},
+
+{id:137,cat:"purview",diff:"hard",
+q:"Which retention limit applies to Purview Audit Standard by default (2024+ update)?",
+opts:["90 days","180 days","365 days","10 years"],
+a:1,e:"Standard default retention is 180 days for most workloads."},
+
+{id:138,cat:"purview",diff:"hard",
+q:"Under E5 licensing with Audit (Premium), which workloads get 1-year default retention?",
+opts:["All workloads","Exchange + SharePoint + OneDrive + Entra ID","Only Teams","Only Exchange"],
+a:1,e:"E5 gives 1-year retention only for those four workloads. Teams / Power Platform / Defender events default to 180 days unless a custom policy is set."},
+
+{id:139,cat:"purview",diff:"med",
+q:"Insider Risk alerts should appear as incidents in Defender XDR. Enable:",
+opts:["Share user risk details with other security solutions (Purview → Insider Risk)","Custom detection","Automation rule","Content Search"],
+a:0,e:"Enable Share user risk details to surface insider risk alerts as Defender XDR incidents filterable by Service source."},
+
+{id:140,cat:"purview",diff:"hard",
+q:"Communication Compliance detects harassment in Teams messages. Which portal manages it?",
+opts:["Defender portal","Purview portal","Entra admin center","M365 admin center"],
+a:1,e:"Communication Compliance is a Purview solution; managed and reviewed in the Purview portal."},
+
+{id:141,cat:"purview",diff:"hard",
+q:"eDiscovery vs Content Search — key difference?",
+opts:["No difference","Content Search = search only; eDiscovery adds case management, holds, exports, review sets","Content Search can hold; eDiscovery cannot","Only eDiscovery searches SPO"],
+a:1,e:"eDiscovery is workflow/case-oriented (holds, review, export). Content Search is a lighter search utility."},
+
+{id:142,cat:"purview",diff:"hard",
+q:"You need to place a legal hold on all mailboxes of custodians. Use:",
+opts:["Purview eDiscovery (Standard or Premium) case with a hold policy","Sentinel workbook","Defender portal","M365 admin center"],
+a:0,e:"Legal holds are managed in eDiscovery cases (Standard or Premium)."},
+
+{id:143,cat:"purview",diff:"med",
+q:"Sensitivity labels — where are they configured?",
+opts:["Purview → Information Protection → Labels","Defender portal","Entra admin center","M365 admin center"],
+a:0,e:"Sensitivity labels are configured under Information Protection in the Purview portal."},
+
+{id:144,cat:"purview",diff:"hard",
+q:"You need to identify all downloads of a specific document from SharePoint. Best log source?",
+opts:["Purview Audit log (UAL)","Entra sign-in logs","Sentinel SecurityAlert","Azure Activity"],
+a:0,e:"UAL captures workload-level file operations (download, share, access) in SharePoint."},
+
+{id:145,cat:"purview",diff:"hard",
+q:"DLP alert in Purview shows a false positive. Best response?",
+opts:["Delete the policy","Add an exception to the DLP rule for the specific condition","Ignore","Downgrade E5 to E3"],
+a:1,e:"DLP policies allow exceptions per rule (senders, recipients, conditions). Refine, don't delete."},
+
+/* ============  THREAT HUNTING + KQL + XDR HUNTING — 50 Qs  ============ */
+{id:146,cat:"hunting",diff:"med",
+q:"Which KQL operator concatenates rows from multiple tables of similar schema?",
+opts:["join","union","extend","lookup"],
+a:1,e:"union = concatenation. join = relational merge on key."},
+
+{id:147,cat:"hunting",diff:"med",
+q:"Which operator merges two tables by matching column values (relational)?",
+opts:["join","union","summarize","render"],
+a:0,e:"join merges rows by matching key columns. Kinds: inner, leftouter, rightouter, fullouter, innerunique, etc."},
+
+{id:148,cat:"hunting",diff:"hard",
+q:"Which operator extends the columns of a fact table with values from a small dimension table (optimized broadcast)?",
+opts:["extend","lookup","mv-expand","join"],
+a:1,e:"lookup is optimized for small right-hand tables (broadcast). Prefer over join when the dimension table is small."},
+
+{id:149,cat:"hunting",diff:"med",
+q:"Render a time chart in a Sentinel workbook query. Add:",
+opts:["print","project","| render timechart","| chart"],
+a:2,e:"render timechart produces a time-series chart. print outputs a single row of scalars."},
+
+{id:150,cat:"hunting",diff:"hard",
+q:"DeviceEvents | summarize arg_max(Timestamp, *) by DeviceId — what does the * mean?",
+opts:["Nothing","Selects all columns of the row with the maximum Timestamp","Wildcard on ActionType","Selects all rows"],
+a:1,e:"arg_max with * returns all columns of the row where Timestamp is maximum, per group (by DeviceId)."},
+
+{id:151,cat:"hunting",diff:"med",
+q:"Exclude Device3 from a DeviceLogonEvents query.",
+opts:["| where DeviceName has 'Device3'","| where DeviceName != 'Device3'","| where DeviceName =~ 'Device3'","| where DeviceName == 'Device3'"],
+a:1,e:"!= is not-equal. == is equal. =~ is case-insensitive equal. has is a term match."},
+
+{id:152,cat:"hunting",diff:"med",
+q:"Which table holds Defender-for-Endpoint device network events?",
+opts:["DeviceNetworkEvents","CommonSecurityLog","AzureNetworkAnalytics_CL","SigninLogs"],
+a:0,e:"DeviceNetworkEvents captures MDE network activity per device (connections, DNS, ports)."},
+
+{id:153,cat:"hunting",diff:"med",
+q:"Which table logs interactive + non-interactive Entra sign-ins? (For interactive specifically.)",
+opts:["SigninLogs","IdentityInfo","SecurityEvent","AuditLogs"],
+a:0,e:"SigninLogs is interactive user sign-ins. Non-interactive is AADNonInteractiveUserSignInLogs. ServicePrincipal has its own."},
+
+{id:154,cat:"hunting",diff:"hard",
+q:"Which table records Microsoft Graph API request-level activity?",
+opts:["AuditLogs","SigninLogs","MicrosoftGraphActivityLogs","AzureActivity"],
+a:2,e:"MicrosoftGraphActivityLogs contains request-level Graph API activity with RequestUri, ResponseStatusCode, SignInActivityId, etc."},
+
+{id:155,cat:"hunting",diff:"hard",
+q:"MacOS AV troubleshooting mode started — the correct where clause:",
+opts:["ActionType == 'DeviceTamperProtectionDisabled'","ActionType == 'AntivirusTroubleshootModeEvent'","Category == 'Troubleshooting'","ActionType startswith 'AV'"],
+a:1,e:"AntivirusTroubleshootModeEvent captures MDE AV troubleshoot state changes on macOS."},
+
+{id:156,cat:"hunting",diff:"hard",
+q:"Audit successful edits to Sentinel analytics rules — the correct filter:",
+opts:["ResourceProvider contains 'SecurityInsights'","OperationNameValue startswith 'MICROSOFT.SECURITYINSIGHTS/ALERTRULES/WRITE'","Category == 'Administrative'","Type == 'AlertRule'"],
+a:1,e:"OperationNameValue startswith the specific write path is authoritative. Provider is too broad."},
+
+{id:157,cat:"hunting",diff:"med",
+q:"Custom detection rule required columns:",
+opts:["Timestamp + DeviceId","Timestamp + ReportId + at least one entity identifier (AccountUpn / DeviceId / etc.)","DeviceId + ReportId","TimeGenerated + Caller + IPAddress"],
+a:1,e:"Timestamp (for alert time) + ReportId (for lookup) + one entity identifier for impacted-entities mapping."},
+
+{id:158,cat:"hunting",diff:"med",
+q:"First line of every advanced hunting query is:",
+opts:["// comment","let binding","The table name (e.g., DeviceEvents)","| where Timestamp > ago(1d)"],
+a:2,e:"Every query starts with the table (source). Filters follow with |."},
+
+{id:159,cat:"hunting",diff:"hard",
+q:"Auto-run hunting queries each time Sentinel Hunting blade opens.",
+opts:["Add to Bookmarks","Add as Favorites","Enable Livestream","Save as Analytics rule"],
+a:1,e:"Favorites auto-run when the Hunting blade opens. Bookmarks preserve findings; Livestream is interactive."},
+
+{id:160,cat:"hunting",diff:"hard",
+q:"Preserve query + results + notes/tags for a finding, shareable with team.",
+opts:["Favorite","Bookmark","Livestream","Auto-hunt"],
+a:1,e:"Bookmarks preserve query text, results, notes, tags — sharable in Sentinel."},
+
+{id:161,cat:"hunting",diff:"hard",
+q:"Interactive investigation feature that runs a query on new incoming data and notifies you on matches.",
+opts:["Analytics rule","Livestream","Watchlist","Workbook"],
+a:1,e:"Livestream is session-based, real-time, and can notify on matches — used to test detections."},
+
+{id:162,cat:"hunting",diff:"hard",
+q:"UEBA behavior title, description, category live in which table?",
+opts:["IdentityInfo","IdentityAccountInfo","BehaviorInfo","BehaviorEntities"],
+a:2,e:"BehaviorInfo has behavior metadata. BehaviorEntities has the participating entities (users, devices)."},
+
+{id:163,cat:"hunting",diff:"hard",
+q:"BehaviorEntities stores what?",
+opts:["Behavior descriptions","Entities involved in each behavior (users, devices, IPs)","UEBA scores","Sign-in risk detections"],
+a:1,e:"BehaviorEntities has the entities participating in each behavior; join with BehaviorInfo on BehaviorId to get titles/descriptions."},
+
+{id:164,cat:"hunting",diff:"med",
+q:"Workbook template for SOC efficiency (incidents created over time + mean time to triage).",
+opts:["Investigation Insights","Incident Overview","Security operations efficiency","Sentinel Cost"],
+a:2,e:"Security operations efficiency template surfaces SOC KPIs including MTTA/MTTR and incident velocity."},
+
+{id:165,cat:"hunting",diff:"hard",
+q:"Sentinel MCP server tool calls sometimes hit the wrong workspace. Ensure consistent workspace targeting.",
+opts:["Add x-mcp-client-tenant-id header","Use list_sentinel_workspaces + specify workspace ID in prompt","Append 'Use default as the workspaceId'","Recreate MCP server config"],
+a:1,e:"Enumerate workspaces, pick the intended ID, and specify it explicitly in every prompt. Default is unreliable."},
+
+{id:166,cat:"hunting",diff:"hard",
+q:"Guest identity in VS Code, MCP calls fail cross-tenant. Fix?",
+opts:["Static token in MCP config","Recreate MCP server","Add x-mcp-client-tenant-id header AND specify workspace ID in prompts","Create ML compute"],
+a:2,e:"Header forces tenant auth. Combined with explicit workspace ID, MCP calls stay scoped correctly."},
+
+{id:167,cat:"hunting",diff:"hard",
+q:"Search jobs are designed for:",
+opts:["Long-running searches across large historical / archived datasets","Real-time alerts","Summarizing hot data","Rendering charts"],
+a:0,e:"Search jobs hydrate a table from archive/basic tiers for long-running searches across large historical windows."},
+
+{id:168,cat:"hunting",diff:"hard",
+q:"Aggregate high-volume logs every 4h into a small analytics-tier table for hunting. Best feature?",
+opts:["Scheduled analytics rule","Summary rule with destination table","Search job","Livestream"],
+a:1,e:"Summary rules run scheduled aggregations and write to a destination table designed for fast queries."},
+
+{id:169,cat:"hunting",diff:"hard",
+q:"Turn hunting query → detection while preserving entity mapping requirements. Two steps?",
+opts:["render + project","Ensure query returns Timestamp, ReportId, + entity identifier → Create alert rule","summarize distinct + render","mv-expand + parse"],
+a:1,e:"Query must return required columns; then use Export → Create detection rule."},
+
+{id:170,cat:"hunting",diff:"med",
+q:"SOC optimization spider chart shows:",
+opts:["Detection counts per MITRE technique","High-level SOC posture and gap recommendations","Ingested GB per source","Analyst response times"],
+a:1,e:"SOC optimizations provide posture insights and improvement recommendations at a high level, not per-technique counts."},
+
+{id:171,cat:"hunting",diff:"hard",
+q:"KQL — count distinct IPs per user in the last 24 hours:",
+opts:["| summarize dcount(SourceIP) by UserPrincipalName","| distinct SourceIP, UserPrincipalName","| count SourceIP by UserPrincipalName","| unique SourceIP"],
+a:0,e:"dcount() = distinct count. summarize dcount(col) by group is the idiomatic pattern."},
+
+{id:172,cat:"hunting",diff:"hard",
+q:"KQL — get a comma-separated list of unique IPs per user:",
+opts:["| summarize IPs = make_set(SourceIP) by UserPrincipalName","| summarize IPs = tostring(SourceIP) by UserPrincipalName","| distinct SourceIP","| union SourceIP"],
+a:0,e:"make_set aggregates distinct values into a dynamic array; make_list keeps duplicates."},
+
+{id:173,cat:"hunting",diff:"hard",
+q:"KQL — parse JSON from an AdditionalFields column:",
+opts:["| extend Parsed = parse_json(AdditionalFields)","| project parse(AdditionalFields)","| json AdditionalFields","| decode(AdditionalFields)"],
+a:0,e:"parse_json converts a JSON string to a dynamic object queryable by dot notation or []."},
+
+{id:174,cat:"hunting",diff:"med",
+q:"KQL — bin timestamps into 15-minute buckets:",
+opts:["| summarize count() by bin(TimeGenerated, 15m)","| summarize count() by TimeGenerated","| bucket 15m","| chunk 15m"],
+a:0,e:"bin(TimeGenerated, timespan) buckets into intervals of that timespan."},
+
+{id:175,cat:"hunting",diff:"med",
+q:"KQL — case-insensitive equality:",
+opts:["==","=~","!=","has"],
+a:1,e:"=~ is case-insensitive equal. == is case-sensitive equal."},
+
+{id:176,cat:"hunting",diff:"hard",
+q:"has vs contains:",
+opts:["Same operator","has = whole-term match (indexed, fast); contains = substring match (slower)","contains is faster","has is deprecated"],
+a:1,e:"has matches whole terms and uses indexes — much faster than contains for large data."},
+
+{id:177,cat:"hunting",diff:"hard",
+q:"mv-expand does what?",
+opts:["Merges arrays","Expands a multi-value column into multiple rows (one per element)","Combines rows","Sorts rows"],
+a:1,e:"mv-expand flattens dynamic arrays or bag columns into individual rows."},
+
+{id:178,cat:"hunting",diff:"med",
+q:"Which table stores Windows Security events forwarded via AMA?",
+opts:["SecurityEvent","AzureDiagnostics","CommonSecurityLog","AuditLogs"],
+a:0,e:"SecurityEvent is the destination for Windows Security event data via AMA (and legacy MMA/Log Analytics agent)."},
+
+{id:179,cat:"hunting",diff:"med",
+q:"Which table stores CEF logs?",
+opts:["SecurityEvent","CommonSecurityLog","Syslog","AzureActivity"],
+a:1,e:"CEF logs land in CommonSecurityLog. Syslog is plain syslog."},
+
+{id:180,cat:"hunting",diff:"med",
+q:"Which table stores Sentinel security alerts?",
+opts:["SecurityAlert","SecurityIncident","SigninLogs","SecurityEvent"],
+a:0,e:"SecurityAlert stores alerts. SecurityIncident stores incidents (aggregations of alerts)."},
+
+{id:181,cat:"hunting",diff:"hard",
+q:"Which table logs edits to Sentinel analytics rules (management-plane changes)?",
+opts:["AzureActivity","AuditLogs","LAQueryLogs","SecurityAlert"],
+a:0,e:"AzureActivity records Azure management-plane operations, including SentinelInsights/AlertRules writes."},
+
+{id:182,cat:"hunting",diff:"hard",
+q:"KQL — top 5 processes by count on a device:",
+opts:["| top 5 by count()","| sort by count() desc | take 5","| summarize c=count() by ProcessName | top 5 by c","| head 5"],
+a:2,e:"You must aggregate first (summarize count by ProcessName), then top by the aggregation column."},
+
+{id:183,cat:"hunting",diff:"hard",
+q:"Correlate SigninLogs with AuditLogs on UserPrincipalName. Which operator?",
+opts:["union","join kind=inner","summarize","extend"],
+a:1,e:"join kind=inner links rows by matching UPN across tables. union just concatenates."},
+
+{id:184,cat:"hunting",diff:"hard",
+q:"Find impossible travel (two sign-ins from geographically distant countries within 1 hour). Best KQL pattern?",
+opts:["Just a where clause","summarize by UPN with prev() or serialize + calculated distance/timing","distinct","top 100"],
+a:1,e:"Use serialize + prev() (or arg_min/arg_max windows) to compare consecutive sign-ins per user, compute time delta and location distance."},
+
+{id:185,cat:"hunting",diff:"med",
+q:"KQL — cast a string column to int:",
+opts:["toint()","cast(int)","int()","convert(int)"],
+a:0,e:"toint() is the standard conversion function. tostring, todouble, tolong, todatetime, todynamic exist too."},
+
+{id:186,cat:"hunting",diff:"hard",
+q:"Which is the correct KQL pattern to detect logon failures spikes on Windows devices?",
+opts:["DeviceLogonEvents | where ActionType == 'LogonFailed' | summarize count() by DeviceName | where count_ > threshold","SecurityAlert","AzureActivity","AuditLogs"],
+a:0,e:"DeviceLogonEvents captures logon success/failure. Summarize by DeviceName and filter above a threshold."},
+
+{id:187,cat:"hunting",diff:"hard",
+q:"KQL — ingest_time() is used when:",
+opts:["The alert should reflect when the event happened","The rule should evaluate based on when data landed in Sentinel (accounts for ingestion delay)","Always","Never"],
+a:1,e:"ingest_time() reflects ingestion time — used in NRT and near-real-time detection scenarios to avoid missing late-arriving events."},
+
+{id:188,cat:"hunting",diff:"hard",
+q:"KQL — schema of Watchlist:",
+opts:["Table with configured columns imported from CSV","Analytics rule","Playbook","Function"],
+a:0,e:"Watchlist creates a table with configured schema imported from CSV. Query via _GetWatchlist('name')."},
+
+{id:189,cat:"hunting",diff:"med",
+q:"KQL — comment syntax:",
+opts:["/* ... */","// this is a comment","# comment","--comment"],
+a:1,e:"KQL uses // for line comments."},
+
+{id:190,cat:"hunting",diff:"hard",
+q:"Blast radius visualization is enabled by:",
+opts:["Onboarding Sentinel to data lake (Sentinel Graph)","Enabling UEBA","Enabling MDCA","Enabling AIR"],
+a:0,e:"Sentinel Graph requires the data lake tier. Blast radius uses Sentinel Graph."},
+
+{id:191,cat:"hunting",diff:"hard",
+q:"MITRE ATT&CK coverage matrix in Sentinel shows for a technique:",
+opts:["Number of active detections + number available but not configured","Only active detections","Only vendor recommendations","Only historical alerts"],
+a:0,e:"Click a technique → details pane shows both counts."},
+
+{id:192,cat:"hunting",diff:"hard",
+q:"Which of these rule types support entity mapping?",
+opts:["Scheduled + NRT only","Fusion + Scheduled","ML + Scheduled","Microsoft Security + NRT"],
+a:0,e:"Only Scheduled + NRT rules support entity mapping — needed for investigatable incidents."},
+
+{id:193,cat:"hunting",diff:"hard",
+q:"For which analytics rules can you view the query logic?",
+opts:["Scheduled + NRT only","Fusion + ML","Microsoft Security + NRT","All"],
+a:0,e:"Fusion and ML are proprietary/opaque; you cannot see or change the query."},
+
+{id:194,cat:"hunting",diff:"hard",
+q:"NRT rule characteristics (memorize):",
+opts:["Runs every minute, 1-min lookback, uses ingestion time, supports entity mapping","Runs every hour","Runs on demand","Runs continuously with no window"],
+a:0,e:"NRT rules run every minute over the preceding minute's ingested events."},
+
+{id:195,cat:"hunting",diff:"hard",
+q:"You suspect a fileless attack. Which advanced-hunting table has command-line telemetry?",
+opts:["DeviceProcessEvents (InitiatingProcessCommandLine, ProcessCommandLine)","DeviceEvents","DeviceFileEvents","DeviceRegistryEvents"],
+a:0,e:"DeviceProcessEvents captures process launches with full command lines (including PowerShell)."},
+
+{id:196,cat:"hunting",diff:"hard",
+q:"Detect PowerShell downloads via Invoke-WebRequest. Best KQL start?",
+opts:["DeviceProcessEvents | where InitiatingProcessFileName =~ 'powershell.exe' AND ProcessCommandLine has_any('Invoke-WebRequest','iwr','Invoke-RestMethod')","AuditLogs","SecurityEvent","SigninLogs"],
+a:0,e:"DeviceProcessEvents contains command-line data. has_any is efficient for whole-term matching."},
+
+{id:197,cat:"hunting",diff:"hard",
+q:"Track OAuth token exchange. Best table?",
+opts:["AADServicePrincipalSignInLogs","SigninLogs (for user-driven flows) + MicrosoftGraphActivityLogs","SecurityEvent","AzureActivity"],
+a:1,e:"Interactive/non-interactive user flows land in SigninLogs; Graph API activity in MicrosoftGraphActivityLogs correlates by SignInActivityId."},
+
+{id:198,cat:"hunting",diff:"hard",
+q:"Function _Im_Dns is:",
+opts:["An ASIM (Advanced Security Information Model) normalized DNS parser","A KQL built-in function","A workbook","A Watchlist"],
+a:0,e:"ASIM provides normalized parsers (Im_ prefix) — e.g., _Im_Dns unifies DNS logs across sources."},
+
+{id:199,cat:"hunting",diff:"hard",
+q:"Prevent auto-updates for built-in ASIM parsers. Two approaches:",
+opts:["Analytics rule referencing the parser","Custom unifying parser that pins built-in version","Redeploy built-in parser with CallerContext=Any and SourceSpecificParser=Any","Custom hunting query"],
+a:1,e:"Pin by including the specific version in a custom unifying parser AND add exclusion records CallerContext=Any/SourceSpecificParser=Any (both actions work, and the exam accepts either)."},
+
+{id:200,cat:"hunting",diff:"hard",
+q:"Sentinel notebook (Jupyter) uses which mechanism to connect to Sentinel data lake and workspaces?",
+opts:["Direct SQL","Sentinel MCP Server (with proper tenant + workspace scoping)","REST via Sentinel API","Direct KQL over HTTPS"],
+a:1,e:"MCP (Model Context Protocol) server exposes Sentinel data to notebook clients like VS Code / Jupyter for hunting."},
+
+/* ============  INGEST DATA INTO SENTINEL — 25 Qs  ============ */
+{id:201,cat:"ingest",diff:"hard",
+q:"50 on-prem VMs don't appear in DCR picker for Windows Security Events via AMA. Fix?",
+opts:["Deploy WEF and use Windows Forwarding Events data connector","Change DCR to CommonSecurityLog","Install Azure Connected Machine agent (Arc)","Change DCR region"],
+a:2,e:"On-prem servers need Azure Arc (Azure Connected Machine agent) to appear as Azure resources targetable by DCRs."},
+
+{id:202,cat:"ingest",diff:"hard",
+q:"Manufacturing app POSTs JSON via Logs Ingestion API. Custom column names + data types required.",
+opts:["Create a custom log table in the workspace","Route to AzureDiagnostics","Deploy AMA on the app server","Route to CommonSecurityLog"],
+a:0,e:"Custom log table must exist first. Logs Ingestion API maps incoming JSON via DCR to that schema."},
+
+{id:203,cat:"ingest",diff:"med",
+q:"Ingest CEF logs from a Fortinet appliance. First step?",
+opts:["Windows Security Events via AMA","Deploy a Linux VM as CEF log forwarder","Add data lake table","Install Arc on the Fortinet"],
+a:1,e:"CEF/Syslog appliances need a Linux forwarder that receives Syslog/CEF and forwards to Sentinel via the AMA CEF/Syslog connector."},
+
+{id:204,cat:"ingest",diff:"med",
+q:"Ingest SharePoint Online events into Sentinel. Best connector?",
+opts:["Defender for Office 365","Microsoft 365 (covers Exchange, SharePoint, Teams)","Azure Activity","Threat Intelligence"],
+a:1,e:"The M365 connector is a single connector covering Exchange, SharePoint, and Teams."},
+
+{id:205,cat:"ingest",diff:"med",
+q:"Verify Entra ID Protection data is flowing into Sentinel. Query which table?",
+opts:["AuditLogs","SigninLogs","AzureDiagnostics","SecurityAlert"],
+a:3,e:"Entra ID Protection alerts land in SecurityAlert."},
+
+{id:206,cat:"ingest",diff:"hard",
+q:"Ingest Microsoft-curated threat indicators using a built-in connector with minimum config.",
+opts:["TAXII connector","Threat Intelligence Upload API","Premium Defender Threat Intelligence connector","TI Platforms (Graph indicators API) connector"],
+a:2,e:"Premium Defender TI connector is Microsoft-curated, built-in — least configuration."},
+
+{id:207,cat:"ingest",diff:"hard",
+q:"You want to connect a THIRD-PARTY TI platform to Sentinel. What do you need first?",
+opts:["Register an app in Entra ID (to get AppId + client secret)","Deploy an Arc agent","Install AMA","Create a Watchlist"],
+a:0,e:"Register an Entra app to obtain AppId + client secret. Configure the TI platform to send to Sentinel with those creds; then enable the TI Platforms data connector."},
+
+{id:208,cat:"ingest",diff:"med",
+q:"AMA vs MMA: which does Microsoft recommend for Windows/Linux log collection today?",
+opts:["MMA (Log Analytics agent)","AMA (Azure Monitor Agent)","Custom agent","OMS agent"],
+a:1,e:"AMA is the modern replacement with DCR-based centralized config, better scale, and security."},
+
+{id:209,cat:"ingest",diff:"med",
+q:"Collect events from 200 Azure VMs (mixed Windows Server + Windows 11) across multiple regions using Windows Security Events via AMA. Region constraints?",
+opts:["Workspace must be in same region as VMs","Region-agnostic — the connector supports any region","Windows client is not supported","On-prem needed too"],
+a:1,e:"Windows Security Events via AMA supports any Windows OS type in any region — no region constraint."},
+
+{id:210,cat:"ingest",diff:"hard",
+q:"Two UEBA-supported data sources on the Entity behavior settings page 'not yet connected' list:",
+opts:["Azure Activity + Security Events","AuditLogs + SigninLogs","AzureDiagnostics + Heartbeat","CommonSecurityLog + Syslog"],
+a:0,e:"UEBA settings page surfaces Azure Activity and Security Events as connectable sources."},
+
+{id:211,cat:"ingest",diff:"hard",
+q:"Data Collection Rule (DCR) — what does it define?",
+opts:["Only which data to collect","Which data + how to transform + destination workspace/table","Only destination","Only frequency"],
+a:1,e:"DCRs define data sources, transformations (KQL), and destinations. Central to AMA."},
+
+{id:212,cat:"ingest",diff:"hard",
+q:"A DCR includes a KQL transformation. Purpose?",
+opts:["Redirect data","Filter/reshape/enrich data before ingestion (reduce cost, add fields)","Encrypt data","Compress data"],
+a:1,e:"DCR transformations use KQL to filter/reshape/enrich records before storage — great for cost optimization."},
+
+{id:213,cat:"ingest",diff:"med",
+q:"Custom log table naming convention?",
+opts:["Any name","Must end with _CL","Must start with Custom_","Must include workspace ID"],
+a:1,e:"Custom tables end with _CL suffix (Custom Log)."},
+
+{id:214,cat:"ingest",diff:"hard",
+q:"Logs Ingestion API vs AMA for custom app:",
+opts:["Same thing","API = app POSTs directly; AMA = agent reads files/local sources","AMA is deprecated","API requires an agent"],
+a:1,e:"Logs Ingestion API is direct HTTP POST from the app (or SDK). AMA collects from files/local sources on a machine."},
+
+{id:215,cat:"ingest",diff:"med",
+q:"AMA on a physical on-prem machine — how do you install it?",
+opts:["Install Azure Connected Machine agent (Arc) first, then AMA via extension","Direct AMA install without Arc","Only supported in Azure","Requires MMA"],
+a:0,e:"Arc onboards the non-Azure machine as an Azure resource; then AMA is deployed as an extension via connector workflow."},
+
+{id:216,cat:"ingest",diff:"hard",
+q:"You've enabled Diagnostic Settings on an Azure resource to send to Log Analytics. Which table gets logs?",
+opts:["AzureActivity","AzureDiagnostics (or resource-specific tables)","SecurityEvent","AuditLogs"],
+a:1,e:"Diagnostic Settings default to AzureDiagnostics; some resource types have their own resource-specific table."},
+
+{id:217,cat:"ingest",diff:"med",
+q:"Azure Activity logs are collected by:",
+opts:["A specific Azure Activity connector (native)","AMA","Legacy MMA","No agent — subscription-level automatic when enabled"],
+a:0,e:"Native Azure Activity connector — enabled per subscription, no agent required."},
+
+{id:218,cat:"ingest",diff:"hard",
+q:"You want to ingest AWS CloudTrail logs into Sentinel. Best approach?",
+opts:["AWS S3 connector (via Amazon S3)","AMA","Custom log","REST API"],
+a:0,e:"Sentinel has a native AWS S3 connector that pulls CloudTrail (and GuardDuty, VPC Flow) from an S3 bucket via IAM role."},
+
+{id:219,cat:"ingest",diff:"hard",
+q:"Legacy MMA / OMS agent is being retired. Migration path for existing Windows Security Event ingestion?",
+opts:["Move to AMA + Windows Security Events via AMA connector + DCR","No action needed","Move to Sentinel data lake only","Reinstall MMA"],
+a:0,e:"Migrate to AMA + AMA connectors + DCRs; MMA is deprecated."},
+
+{id:220,cat:"ingest",diff:"med",
+q:"Windows Event Forwarding (WEF) + Sentinel — supported approach?",
+opts:["Yes, via Windows Forwarding Events data connector (WEF collector server)","No, deprecated","Only for Linux","Only cloud VMs"],
+a:0,e:"WEF is supported: configure a WEF collector Windows Server, then use the Windows Forwarding Events data connector."},
+
+{id:221,cat:"ingest",diff:"hard",
+q:"Azure Firewall logs into Sentinel. Recommended approach?",
+opts:["Enable Diagnostic settings on Azure Firewall → send to Log Analytics workspace","Manual export daily","Use CEF forwarder","Only via ASIM"],
+a:0,e:"Azure Firewall streams diagnostic logs directly to Log Analytics. ASIM parsers can normalize them."},
+
+{id:222,cat:"ingest",diff:"hard",
+q:"You created a DCR with a transformation that drops records where Level != Error. Effect?",
+opts:["Only Error rows stored (others dropped at ingestion time — cost saving)","All rows stored","Rows delayed","Rows encrypted"],
+a:0,e:"Transformations run at ingestion time. Filtered-out records aren't billed or stored."},
+
+{id:223,cat:"ingest",diff:"med",
+q:"Content Hub in Sentinel — purpose?",
+opts:["A marketplace for solution packages (connectors, analytics rules, workbooks, hunting queries, playbooks)","Only workbooks","Only analytics rules","Log ingestion pipeline"],
+a:0,e:"Content Hub bundles related content into installable solutions (e.g., Azure Firewall solution)."},
+
+{id:224,cat:"ingest",diff:"hard",
+q:"Sentinel data lake tier — purpose?",
+opts:["Long-retention low-cost storage with KQL job / summary rule capabilities","Only archives","Only for compliance","Replaces analytics tier"],
+a:0,e:"Data lake enables long retention at lower cost; KQL jobs and Summary rules work with data lake."},
+
+{id:225,cat:"ingest",diff:"hard",
+q:"To include on-prem Linux servers as sources for Syslog/CEF via AMA, you need:",
+opts:["Arc onboarding + AMA + Syslog connector","No Arc — AMA runs standalone anywhere","MMA only","Only Log Forwarder"],
+a:0,e:"Non-Azure Linux servers need Arc to appear in Sentinel/DCR, then AMA + Syslog connector."},
+
+/* ============  SENTINEL SIEM / PLATFORM CONFIG + RBAC — 25 Qs  ============ */
+{id:226,cat:"config",diff:"hard",
+q:"Least privilege to create/edit Sentinel analytics rules?",
+opts:["Sentinel Reader","Sentinel Responder","Sentinel Contributor","Owner"],
+a:2,e:"Sentinel Contributor can create/edit analytics rules, workbooks, hunting queries."},
+
+{id:227,cat:"config",diff:"med",
+q:"Assign/dismiss incidents. Least-privilege role?",
+opts:["Sentinel Reader","Sentinel Responder","Sentinel Contributor","Owner"],
+a:1,e:"Sentinel Responder can manage incidents (assign, dismiss, close)."},
+
+{id:228,cat:"config",diff:"hard",
+q:"Manual playbook run on an entity — least privilege?",
+opts:["Sentinel Responder + Sentinel Playbook Operator","Sentinel Reader","Sentinel Contributor","Owner"],
+a:0,e:"Responder + Playbook Operator combines incident access with playbook trigger permission."},
+
+{id:229,cat:"config",diff:"hard",
+q:"Create Workbook — least-privilege combination?",
+opts:["Sentinel Contributor alone","Workbook Contributor (Azure Monitor) + Sentinel Reader (or higher)","Owner","Log Analytics Contributor"],
+a:1,e:"Workbook Contributor is required for creating/deleting workbooks; combined with a Sentinel role for access."},
+
+{id:230,cat:"config",diff:"med",
+q:"Automation Contributor role — grant to whom?",
+opts:["The user","The Azure Security Insights service principal (on playbook's RG)","The playbook's managed identity","The SOC group"],
+a:1,e:"Grant to Azure Security Insights (Sentinel's SP) on the RG containing playbooks so the automation rule can invoke them."},
+
+{id:231,cat:"config",diff:"med",
+q:"Data retention configuration — where?",
+opts:["Per-workspace defaults + per-table overrides","Only per-table","Only workspace defaults","Only via KQL"],
+a:0,e:"Workspace has a default retention; individual tables can have overrides (including Basic/Analytics tier)."},
+
+{id:232,cat:"config",diff:"hard",
+q:"Basic table tier vs Analytics tier:",
+opts:["Same behavior","Basic = lower cost, limited query features, shorter default retention; Analytics = full features","Basic is deprecated","Analytics is deprecated"],
+a:1,e:"Basic is cheaper but limited (search only, 8-day retention). Analytics supports full querying and 30–730 day retention."},
+
+{id:233,cat:"config",diff:"hard",
+q:"Archive tier retention range?",
+opts:["Up to 30 days","Up to 12 years","Up to 90 days","Up to 30 years"],
+a:1,e:"Archive tier retains logs up to 12 years, retrievable via search jobs."},
+
+{id:234,cat:"config",diff:"med",
+q:"Sentinel workspace deployment guidance — one workspace per:",
+opts:["Business unit","Region if compliance requires; otherwise consolidate for correlation","Every service","Never consolidate"],
+a:1,e:"Prefer a single workspace for cross-workload correlation, unless compliance/geographic constraints require multiple."},
+
+{id:235,cat:"config",diff:"hard",
+q:"SOC optimizations — where surfaced?",
+opts:["Sentinel → SOC optimizations blade","Only in workbooks","Only via API","Not available"],
+a:0,e:"Sentinel has a SOC optimizations blade with tailored recommendations (coverage/data value)."},
+
+{id:236,cat:"config",diff:"hard",
+q:"Anomaly rules in Sentinel — purpose?",
+opts:["Pre-tuned ML rules that detect anomalous behavior; can customize thresholds","Only user-authored KQL","Deprecated","Same as Fusion"],
+a:0,e:"Anomaly rules are Microsoft-provided ML rules with customizable thresholds (unlike opaque Fusion/ML behavior)."},
+
+{id:237,cat:"config",diff:"hard",
+q:"Watchlist — best use case?",
+opts:["A named table of static reference data joined with telemetry (e.g., high-value users, allow-listed IPs)","Alerts","Playbook","Analytics rule"],
+a:0,e:"Watchlists hold reference data like VIP users or allow-lists, referenced via _GetWatchlist() in KQL."},
+
+{id:238,cat:"config",diff:"med",
+q:"Watchlist input format?",
+opts:["CSV","XML","JSON","YAML"],
+a:0,e:"Watchlists are imported from CSV files."},
+
+{id:239,cat:"config",diff:"hard",
+q:"Which role can modify Defender XDR security settings? (Least privilege)",
+opts:["Security Reader","Security Operator","Security Administrator (Entra) OR Global Administrator","Compliance Admin"],
+a:2,e:"Security Administrator (Entra role) can modify Defender XDR settings; Global Administrator also can. Security Reader is read-only."},
+
+{id:240,cat:"config",diff:"hard",
+q:"Global Administrator vs Security Administrator for Defender XDR:",
+opts:["Same","Global Admin has all permissions; Security Admin has security-focused permissions including modifying Defender XDR settings","Security Admin cannot modify Defender","Global Admin cannot modify Defender"],
+a:1,e:"Global has broader scope; Security Admin is scoped to security workloads but still can modify Defender XDR settings."},
+
+{id:241,cat:"config",diff:"med",
+q:"Which Entra ID Protection role CANNOT see the Risky sign-ins report?",
+opts:["Security Reader","Security Operator","Security Administrator","Global Reader"],
+a:1,e:"Security Operator has this specific restriction."},
+
+{id:242,cat:"config",diff:"med",
+q:"Conditional Access Administrators — can they create sign-in risk CA policies?",
+opts:["No","Yes, they can create CA policies that use sign-in risk as a condition","Only Global Admin can","Only Security Admin can"],
+a:1,e:"CA Administrators can create CA policies incorporating sign-in risk as a condition."},
+
+{id:243,cat:"config",diff:"med",
+q:"Which license is required for Entra ID Protection?",
+opts:["Entra ID Free","Entra ID P1","Entra ID P2","Any Enterprise"],
+a:2,e:"Entra ID Protection is a Premium P2 feature."},
+
+{id:244,cat:"config",diff:"hard",
+q:"Sentinel workspace RBAC — Sentinel roles vs Log Analytics roles?",
+opts:["Same","Sentinel roles govern SIEM operations; Log Analytics roles govern workspace/table management","Sentinel roles are deprecated","LA Contributor is the same as Sentinel Contributor"],
+a:1,e:"Distinct sets. Sentinel roles = SIEM workflow (incidents, rules, hunting). LA roles = workspace/table/DCR management."},
+
+{id:245,cat:"config",diff:"hard",
+q:"Data lake role for Sentinel — which role grants access to data lake tier?",
+opts:["Sentinel Contributor implicitly","Specific Sentinel data lake role (per workspace config)","Log Analytics Reader","Owner only"],
+a:1,e:"Sentinel data lake has specific role bindings for access to data lake tier and KQL jobs, distinct from analytics-tier roles."},
+
+{id:246,cat:"config",diff:"hard",
+q:"Users at Contoso Tier-1 SOC must run playbooks manually on incidents but not create/edit anything. Assign:",
+opts:["Sentinel Contributor","Sentinel Responder + Sentinel Playbook Operator","Owner","Only Reader"],
+a:1,e:"Responder = incident lifecycle; Playbook Operator = manual playbook triggers. Least-privilege combo."},
+
+{id:247,cat:"config",diff:"hard",
+q:"Owner in RG-Auto for User1 lets User1 do what regarding Sentinel workbooks?",
+opts:["Cannot create workbooks","Can create workbooks (Owner supersedes Sentinel-specific roles for workbook create)","Only view","Only edit"],
+a:1,e:"Owner has full control — supersedes granular role requirements. However, principle of least privilege prefers narrower roles."},
+
+{id:248,cat:"config",diff:"med",
+q:"Workbook Contributor is a role from which service?",
+opts:["Azure Monitor (not Sentinel-specific)","Only Sentinel","Only Log Analytics","Only Defender"],
+a:0,e:"Workbook Contributor is an Azure Monitor role that applies to Azure Monitor Workbooks used by Sentinel."},
+
+{id:249,cat:"config",diff:"med",
+q:"Microsoft Sentinel Automation Contributor — where is it typically assigned?",
+opts:["On the workspace","On the resource group containing the playbook, to Azure Security Insights service principal","On the analytics rule","On the tenant"],
+a:1,e:"Playbook RG scope, to Sentinel's service principal (Azure Security Insights)."},
+
+{id:250,cat:"config",diff:"hard",
+q:"Log Analytics Contributor — does it grant Sentinel-specific rights?",
+opts:["Yes, includes all Sentinel","No — it manages workspace/tables/DCRs; separate from Sentinel roles for SIEM operations","Deprecated","Only for LA Query"],
+a:1,e:"Log Analytics Contributor manages workspace resources (tables, DCRs, retention) but is not a Sentinel operational role."},
+
+/* ============  CONFIGURE DETECTIONS + MITRE — 10 Qs  ============ */
+{id:251,cat:"detections",diff:"hard",
+q:"For a specific MITRE technique: number of active detections + number available but not configured. Where?",
+opts:["SOC optimization spider","Threat management → MITRE ATT&CK coverage matrix → click technique → details pane","Content Hub filter","Analytics rules gallery"],
+a:1,e:"MITRE coverage matrix technique details pane surfaces both counts."},
+
+{id:252,cat:"detections",diff:"med",
+q:"Reduce time between suspicious sign-in and alert creation: run every 1 min with 1-min lookback and use ingestion time. Which rule type?",
+opts:["Scheduled","NRT","Microsoft Security","ML Behavior"],
+a:1,e:"NRT rules run every minute, 1-min lookback, ingestion-time based — designed exactly for this."},
+
+{id:253,cat:"detections",diff:"hard",
+q:"Which rules will generate investigatable incidents (entity mapping)?",
+opts:["Only Scheduled","Only NRT","Scheduled + NRT","All rules"],
+a:2,e:"Only Scheduled and NRT support entity mapping, which is required for the investigation graph."},
+
+{id:254,cat:"detections",diff:"hard",
+q:"Fusion rule — what is it?",
+opts:["Correlation engine using scalable ML to detect multi-stage attacks; proprietary","User-written KQL","Same as Scheduled","Deprecated"],
+a:0,e:"Fusion detects multi-stage attacks across alerts and raw events using proprietary ML."},
+
+{id:255,cat:"detections",diff:"hard",
+q:"ML behavior analytics rules — can you view or edit query logic?",
+opts:["Yes","No — proprietary ML; query logic is not exposed","Only in Preview mode","Only Global Admin"],
+a:1,e:"Both Fusion and ML Behavior are opaque; you cannot view or change their logic."},
+
+{id:256,cat:"detections",diff:"med",
+q:"Which analytics rule type ingests Microsoft security product alerts as-is (Defender for Cloud, MDCA, etc.)?",
+opts:["Microsoft Security rule (incident creation from vendor alerts)","Scheduled","NRT","Fusion"],
+a:0,e:"Microsoft Security rules create Sentinel incidents from Microsoft product alerts (aka Microsoft incident creation rules)."},
+
+{id:257,cat:"detections",diff:"hard",
+q:"Threat Intelligence analytics rule — trigger frequency default?",
+opts:["1 minute","1 hour","24 hours","Continuous"],
+a:1,e:"TI matching runs periodically; default cadence is around 1 hour."},
+
+{id:258,cat:"detections",diff:"hard",
+q:"Configure anomalies in Sentinel — what customization is allowed?",
+opts:["No customization","Threshold, aggregation window, and other parameters can be tuned per Microsoft-provided rule","Full query rewrite","Only enable/disable"],
+a:1,e:"Anomaly rules expose threshold and aggregation-window parameters for tuning."},
+
+{id:259,cat:"detections",diff:"hard",
+q:"Enable View MITRE by threat scenarios — what does it do?",
+opts:["Shows detection counts per technique","Reorganizes matrix by threat scenario (does NOT show detection counts)","Enables live simulations","Disables techniques"],
+a:1,e:"View MITRE by threat scenarios reorganizes the matrix; detection counts remain in the technique details pane."},
+
+{id:260,cat:"detections",diff:"hard",
+q:"Simulate possible coverage from available detections — where?",
+opts:["MITRE ATT&CK coverage matrix — simulate coverage by enabling available detections","SOC optimizations","Content Hub","Workbook"],
+a:0,e:"The MITRE ATT&CK matrix supports simulating coverage by enabling available detections to see resulting matrix state."},
+
+/* ============  Additional Sentinel-detection Qs — Q261+  ============ */
+{id:261,cat:"sentinel-detect",diff:"hard",
+q:"KQL job in data lake appends to existing analytics-tier table. Schema mismatch error. Fix?",
+opts:["Create new destination table","Modify the query so output column names + data types match the destination","Disable/re-enable the job","Run interactively"],
+a:1,e:"Append requires exact schema match. Adjust the query, not the table."},
+
+{id:262,cat:"sentinel-detect",diff:"hard",
+q:"NetworkSessions_CL is huge; NetworkSessionSummary_CL is populated by a summary rule. For 7-day trend hunting, query which?",
+opts:["NetworkSessions_CL raw","NetworkSessionSummary_CL","AzureActivity","SecurityEvent"],
+a:1,e:"Query the summary table — it's optimized for longer-term aggregated trends."},
+
+{id:263,cat:"sentinel-detect",diff:"med",
+q:"Aggregate high-volume firewall logs by source IP and destination port daily to speed up hunts.",
+opts:["Search job","Summary rule that writes to a destination table","Scheduled analytics rule","Livestream"],
+a:1,e:"Summary rule = scheduled aggregation into a small destination table."},
+
+{id:264,cat:"sentinel-detect",diff:"hard",
+q:"Difference between Summary rule and KQL job?",
+opts:["Same","Summary rule writes to analytics-tier destination on a schedule; KQL job runs in data lake tier asynchronously","Summary rules are deprecated","KQL jobs cannot write anywhere"],
+a:1,e:"Summary rules operate on analytics tier + a destination table. KQL jobs run in data lake tier (can also append to analytics-tier tables)."},
+
+{id:265,cat:"sentinel-detect",diff:"hard",
+q:"Search job vs Summary rule?",
+opts:["Search job = long-running search over archive/basic tiers, hydrating a table; Summary rule = scheduled aggregation into a destination","Same","Search jobs create incidents","Summary rules create incidents"],
+a:0,e:"Search jobs pull historical data on-demand into a hydrated table. Summary rules run continuously on a schedule."},
+
+{id:266,cat:"sentinel-detect",diff:"hard",
+q:"Which of these does NOT create incidents?",
+opts:["Scheduled analytics rule","NRT rule","Summary rule","Microsoft Security rule"],
+a:2,e:"Summary rules produce aggregated data, not alerts or incidents."},
+
+{id:267,cat:"sentinel-detect",diff:"hard",
+q:"To hunt across notebooks connected to Sentinel data lake, which server is required?",
+opts:["Sentinel MCP server (Model Context Protocol)","Only KQL API","LA REST","MDCA"],
+a:0,e:"Sentinel MCP server exposes tools to notebook clients (VS Code, Jupyter) for hunting."},
+
+{id:268,cat:"sentinel-detect",diff:"hard",
+q:"Sentinel Graph — how does it enrich investigations?",
+opts:["Provides a queryable relationship graph across entities (users, devices, IPs) to visualize propagation like blast radius","Only visualization","Only for MDE","Deprecated"],
+a:0,e:"Sentinel Graph is the relationship layer enabling blast radius, entity resolution, propagation queries."},
+
+{id:269,cat:"sentinel-detect",diff:"hard",
+q:"Sentinel Graph vs Fusion rule?",
+opts:["Same","Fusion = ML detection of multi-stage attacks; Graph = queryable entity relationship platform","Fusion uses Graph","Graph is deprecated"],
+a:1,e:"Fusion detects; Graph is a data + query layer for investigation."},
+
+{id:270,cat:"sentinel-detect",diff:"hard",
+q:"How do you enable Sentinel Graph in a workspace?",
+opts:["It's automatic","Onboard Sentinel to the data lake tier — Sentinel Graph is enabled with data lake","Only via API","Purchase separate SKU"],
+a:1,e:"Sentinel Graph capability is tied to onboarding the workspace to the data lake tier."},
+
+{id:271,cat:"sentinel-detect",diff:"hard",
+q:"list_sentinel_workspaces MCP tool — used when?",
+opts:["Enumerate workspace IDs available to the current identity — you then explicitly reference the desired workspace ID in prompts","Only during setup","To delete workspaces","To list connectors"],
+a:0,e:"Use it to enumerate workspaces the identity can query, then pin one via explicit reference in each MCP prompt."},
+
+{id:272,cat:"sentinel-detect",diff:"hard",
+q:"x-mcp-client-tenant-id header in MCP server definition — purpose?",
+opts:["Forces the MCP tool calls to authenticate against the specified tenant","Encrypts requests","Enables Copilot","Sets workspace ID"],
+a:0,e:"Header forces the tenant context — critical when the client is signed in with a guest identity."},
+
+{id:273,cat:"sentinel-detect",diff:"hard",
+q:"Notebook hunting through MCP — best pattern for reproducibility?",
+opts:["Pin tenant ID via header + list_sentinel_workspaces + explicit workspace ID in each prompt","Rely on defaults","Static bearer token","No pinning needed"],
+a:0,e:"Combine tenant header + explicit workspace ID; each prompt should include the desired workspace ID."},
+
+{id:274,cat:"sentinel-detect",diff:"hard",
+q:"Retention tiers you should distinguish: Analytics vs Basic vs Archive vs Data lake.",
+opts:["Analytics = hot queryable; Basic = search-only, cheaper; Archive = long-term retrieved via search jobs; Data lake = KQL jobs + summary rules","Only Analytics matters","Basic and Archive are the same","Data lake is deprecated"],
+a:0,e:"Four tiers with distinct query patterns and cost/retention trade-offs."},
+
+{id:275,cat:"sentinel-detect",diff:"hard",
+q:"You have a KQL job scheduled hourly writing to an analytics-tier destination table. The query modification adds a column. What must you do to keep the job running?",
+opts:["Change destination","Ensure the destination table schema includes the new column (evolve destination schema OR remove the extra column from output)","Disable job","Recreate workspace"],
+a:1,e:"Append requires schema match. Either evolve the destination table or trim query output to match existing schema."},
+
+{id:276,cat:"sentinel-detect",diff:"hard",
+q:"Sentinel Graph enables Blast radius — what does 'blast radius' show?",
+opts:["The set of entities reachable/impacted from a compromised entity","Cost of an incident","Ingestion volume","Regulatory scope"],
+a:0,e:"Blast radius visualizes the propagation reach — devices/accounts/resources connected to a compromised entity."},
+
+{id:277,cat:"sentinel-detect",diff:"med",
+q:"Which is required to make Blast Radius available on a device node in an incident?",
+opts:["Configure Sentinel to use data lake (enables Sentinel Graph)","Enable UEBA","Onboard MDE","Enable MDCA"],
+a:0,e:"Data lake tier + Sentinel Graph is the prerequisite for Blast radius."},
+
+{id:278,cat:"sentinel-detect",diff:"hard",
+q:"To ensure a KQL job runs successfully after query modification renames columns, best action?",
+opts:["Modify query so output column names and data types match destination table","Change job frequency","Rebuild workspace","Increase timeout"],
+a:0,e:"Schema match at append time is mandatory."},
+
+{id:279,cat:"sentinel-detect",diff:"hard",
+q:"Sentinel Content Hub Threat Intelligence solution enables which built-in TI connectors?",
+opts:["Premium Defender TI, TAXII, TI Platforms (Graph indicators API), TI Upload API","Only TAXII","Only Premium","None"],
+a:0,e:"The Threat Intelligence solution installs multiple TI connectors — Premium Defender TI (Microsoft-curated, easiest), TAXII (external servers), TI Platforms (Graph indicators), and TI Upload API (custom STIX)."},
+
+{id:280,cat:"sentinel-detect",diff:"med",
+q:"To hunt for behaviors using UEBA data, join which pair of tables?",
+opts:["BehaviorInfo + BehaviorEntities (on BehaviorId)","IdentityInfo + BehaviorInfo","SigninLogs + AuditLogs","SecurityAlert + SecurityIncident"],
+a:0,e:"BehaviorInfo (metadata) join BehaviorEntities (participating entities) on BehaviorId is the UEBA hunting idiom."}
+
+];
+
+/* =================================================================
+   QUIZ ENGINE
+   ================================================================= */
+const CAT_LABELS = {
+  automation: "Automation for XDR + Sentinel",
+  "respond-xdr": "Respond to alerts in Defender XDR",
+  "sentinel-detect": "Detect threats via Sentinel platform",
+  mde: "Respond to alerts in Defender for Endpoint",
+  purview: "Investigate M365 activities (Purview / audit / graph)",
+  hunting: "Threat hunting + KQL + Defender XDR hunting",
+  ingest: "Data ingestion into Sentinel",
+  config: "Sentinel SIEM / platform config + RBAC",
+  detections: "Configure detections + MITRE",
+};
+let state = {
+  filtered: [],
+  order: [],
+  idx: 0,
+  correct: 0,
+  wrong: 0,
+  answered: {},   // id -> selected index
+  mode: "study",
+  finished: false,
+};
+
+const $ = id => document.getElementById(id);
+const quizArea = $("quizArea");
+const summary = $("summary");
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem("sc200quiz-progress-v2");
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    if(saved && saved.answered) state.answered = saved.answered;
+  }catch(e){}
+}
+function saveProgress(){
+  try{
+    localStorage.setItem("sc200quiz-progress-v2", JSON.stringify({answered: state.answered}));
+  }catch(e){}
+}
+function resetProgress(){
+  localStorage.removeItem("sc200quiz-progress-v2");
+  state.answered = {};
+  startQuiz();
+}
+
+function applyFilters(){
+  const cat = $("filterCategory").value;
+  const diff = $("filterDifficulty").value;
+  state.filtered = QUESTIONS.filter(q =>
+    (cat === "all" || q.cat === cat) &&
+    (diff === "all" || q.diff === diff)
+  );
+}
+
+function startQuiz(){
+  applyFilters();
+  state.order = state.filtered.map(q => q.id);
+  state.idx = 0;
+  state.correct = 0;
+  state.wrong = 0;
+  state.finished = false;
+  state.mode = $("mode").value;
+  summary.style.display = "none";
+  // recompute correct/wrong from stored answers if in study mode
+  if(state.mode === "study"){
+    for(const q of state.filtered){
+      if(state.answered[q.id] !== undefined){
+        if(state.answered[q.id] === q.a) state.correct++; else state.wrong++;
+      }
+    }
+  }
+  renderCurrent();
+  updateStats();
+}
+function shuffleQuiz(){
+  applyFilters();
+  state.order = shuffle(state.filtered.map(q => q.id));
+  state.idx = 0;
+  state.correct = 0;
+  state.wrong = 0;
+  state.finished = false;
+  state.mode = $("mode").value;
+  summary.style.display = "none";
+  renderCurrent();
+  updateStats();
+}
+
+function currentQ(){
+  const id = state.order[state.idx];
+  return QUESTIONS.find(q => q.id === id);
+}
+
+function renderCurrent(){
+  if(state.idx >= state.order.length){
+    finish();
+    return;
+  }
+  const q = currentQ();
+  const stored = state.answered[q.id];
+  const isAnswered = stored !== undefined;
+  const showResult = state.mode === "study" && isAnswered;
+
+  const catLabel = CAT_LABELS[q.cat] || q.cat;
+  const diffTag = q.diff === "hard" ? `<span class="qtag hard">HARD</span>` : `<span class="qtag med">MEDIUM</span>`;
+
+  let html = `
+    <div class="question-card">
+      <div class="qhead">
+        <div>
+          <span class="qtag">${catLabel}</span>
+          ${diffTag}
+        </div>
+        <div class="qnum">Q${state.idx+1} of ${state.order.length} · ID #${q.id}</div>
+      </div>
+      <div class="qtext">${q.q}</div>
+      <div class="options">
+  `;
+  q.opts.forEach((opt, i) => {
+    let cls = "option";
+    if(showResult){
+      cls += " locked";
+      if(i === q.a) cls += " correct";
+      else if(i === stored) cls += " wrong";
+    }else if(isAnswered && stored === i){
+      cls += " selected";
+    }
+    const letter = String.fromCharCode(65+i);
+    html += `<div class="${cls}" data-idx="${i}"><span class="option-letter">${letter}</span>${opt}</div>`;
+  });
+  html += `</div>`;
+
+  if(showResult){
+    const isCorrect = stored === q.a;
+    html += `<div class="explanation ${isCorrect?'':'wrong-answer'}">
+      <strong>${isCorrect?"Correct.":"Incorrect."}</strong> ${q.e}
+    </div>`;
+  }
+
+  html += `<div class="action-row">
+    ${state.idx>0?'<button class="secondary" id="prevBtn">← Previous</button>':''}
+    ${isAnswered && state.mode==="study"?'<button id="nextBtn">Next →</button>':''}
+    ${state.mode==="exam" && isAnswered?'<button id="nextBtn">Next →</button>':''}
+    ${!isAnswered && state.mode==="study"?'<button class="secondary" id="revealBtn">Reveal answer</button>':''}
+    ${state.mode==="exam" && !isAnswered?'<button class="secondary" id="skipBtn">Skip</button>':''}
+    <button class="secondary" id="jumpBtn">Jump to end</button>
+  </div>`;
+  html += `</div>`;
+
+  quizArea.innerHTML = html;
+  bindOptions();
+  updateProgress();
+}
+
+function bindOptions(){
+  document.querySelectorAll(".option").forEach(el => {
+    if(el.classList.contains("locked")) return;
+    el.addEventListener("click", () => selectOption(parseInt(el.dataset.idx,10)));
+  });
+  if($("nextBtn")) $("nextBtn").addEventListener("click", nextQ);
+  if($("prevBtn")) $("prevBtn").addEventListener("click", prevQ);
+  if($("revealBtn")) $("revealBtn").addEventListener("click", ()=> {
+    const q = currentQ();
+    // treat as wrong reveal? mark not-answered but show; simplest is to force-mark as wrong so they see explanation
+    state.answered[q.id] = -1;
+    state.wrong++;
+    saveProgress();
+    renderCurrent();
+    updateStats();
+  });
+  if($("skipBtn")) $("skipBtn").addEventListener("click", nextQ);
+  if($("jumpBtn")) $("jumpBtn").addEventListener("click", finish);
+}
+
+function selectOption(i){
+  const q = currentQ();
+  if(state.answered[q.id] !== undefined) return;
+  state.answered[q.id] = i;
+  if(i === q.a) state.correct++; else state.wrong++;
+  saveProgress();
+  renderCurrent();
+  updateStats();
+  // in exam mode auto-advance after short pause
+  if(state.mode === "exam"){
+    setTimeout(nextQ, 350);
+  }
+}
+
+function nextQ(){
+  state.idx++;
+  renderCurrent();
+}
+function prevQ(){
+  state.idx = Math.max(0, state.idx-1);
+  renderCurrent();
+}
+
+function updateStats(){
+  const answered = state.correct + state.wrong;
+  $("statCurrent").textContent = state.idx + 1;
+  $("statTotal").textContent = state.order.length;
+  $("statCorrect").textContent = state.correct;
+  $("statWrong").textContent = state.wrong;
+  const pct = answered ? Math.round((state.correct/answered)*100) : 0;
+  $("statScore").textContent = pct + "%";
+}
+function updateProgress(){
+  const pct = state.order.length ? ((state.idx+1)/state.order.length)*100 : 0;
+  $("progressFill").style.width = pct + "%";
+}
+
+function finish(){
+  state.finished = true;
+  quizArea.innerHTML = "";
+  const answered = state.correct + state.wrong;
+  const pct = answered ? Math.round((state.correct/answered)*100) : 0;
+  const passClass = pct >= 80 ? "pass" : (pct >= 70 ? "" : "fail");
+  const verdict = pct >= 80 ? "Exam-ready. Aim to sustain ≥85% across three shuffled runs before booking." :
+                  (pct >= 70 ? "Almost. Review the wrong ones and re-run this filter." :
+                               "Not ready — cycle back through the weakness map (Part A of the study pack) and Learn modules.");
+
+  // Category breakdown
+  const catStats = {};
+  for(const q of state.filtered){
+    if(!catStats[q.cat]) catStats[q.cat] = {correct:0, total:0};
+    if(state.answered[q.id] !== undefined){
+      catStats[q.cat].total++;
+      if(state.answered[q.id] === q.a) catStats[q.cat].correct++;
+    }
+  }
+  let breakdownHtml = "";
+  for(const [cat, s] of Object.entries(catStats)){
+    if(s.total === 0) continue;
+    const p = Math.round((s.correct/s.total)*100);
+    const color = p >= 80 ? "var(--good)" : (p >= 70 ? "var(--warn)" : "var(--bad)");
+    breakdownHtml += `<div class="breakdown-row">
+      <span>${CAT_LABELS[cat]}</span>
+      <span style="color:${color};font-weight:600">${s.correct}/${s.total} (${p}%)</span>
+    </div>`;
+  }
+
+  summary.innerHTML = `
+    <h2>Practice run complete</h2>
+    <div class="final-score ${passClass}">${pct}%</div>
+    <div>${state.correct} correct · ${state.wrong} wrong · ${state.order.length - answered} unanswered</div>
+    <div style="margin-top:12px;color:var(--muted)">${verdict}</div>
+    <div class="breakdown">
+      <h3 style="margin-bottom:6px">Breakdown by category</h3>
+      ${breakdownHtml}
+    </div>
+    <div style="margin-top:20px">
+      <button id="restartBtn">Restart same filter</button>
+      <button class="secondary" id="reshuffleBtn">Shuffle & start over</button>
+      <button class="secondary" id="reviewBtn">Review incorrect only</button>
+    </div>
+  `;
+  summary.style.display = "block";
+  $("restartBtn").addEventListener("click", () => {
+    // reset only stats and index, keep answers if study; wipe answers for exam mode fresh run
+    if(state.mode === "exam"){
+      for(const q of state.filtered) delete state.answered[q.id];
+    }
+    startQuiz();
+  });
+  $("reshuffleBtn").addEventListener("click", () => {
+    // wipe answers for filtered set
+    for(const q of state.filtered) delete state.answered[q.id];
+    saveProgress();
+    shuffleQuiz();
+  });
+  $("reviewBtn").addEventListener("click", () => {
+    // filter to only questions answered wrong
+    const wrongIds = state.filtered.filter(q => state.answered[q.id] !== undefined && state.answered[q.id] !== q.a).map(q => q.id);
+    if(wrongIds.length === 0){
+      alert("No incorrect answers to review!");
+      return;
+    }
+    state.filtered = QUESTIONS.filter(q => wrongIds.includes(q.id));
+    state.order = state.filtered.map(q => q.id);
+    // clear those answers so user can redo them
+    for(const id of wrongIds) delete state.answered[id];
+    saveProgress();
+    state.idx = 0;
+    state.correct = 0;
+    state.wrong = 0;
+    state.finished = false;
+    summary.style.display = "none";
+    renderCurrent();
+    updateStats();
+  });
+}
+
+// Keyboard shortcuts
+document.addEventListener("keydown", e => {
+  if(state.finished) return;
+  if(state.idx >= state.order.length) return;
+  const q = currentQ();
+  const isAnswered = state.answered[q.id] !== undefined;
+  if(/^[1-9]$/.test(e.key)){
+    const idx = parseInt(e.key,10)-1;
+    if(idx < q.opts.length && !isAnswered) selectOption(idx);
+  }else if(e.key === "Enter"){
+    if(isAnswered) nextQ();
+  }else if(e.key === "?"){
+    if(!isAnswered && state.mode === "study"){
+      $("revealBtn")?.click();
+    }
+  }else if(e.key === "ArrowRight"){
+    if(isAnswered) nextQ();
+  }else if(e.key === "ArrowLeft"){
+    if(state.idx > 0) prevQ();
+  }
+});
+
+// Wire controls
+$("startBtn").addEventListener("click", startQuiz);
+$("shuffleBtn").addEventListener("click", shuffleQuiz);
+$("resetBtn").addEventListener("click", () => {
+  if(confirm("Reset all progress? This deletes stored answers.")) resetProgress();
+});
+$("filterCategory").addEventListener("change", () => {
+  // when filter changes, restart within study mode without losing global answers
+  startQuiz();
+});
+$("filterDifficulty").addEventListener("change", startQuiz);
+$("mode").addEventListener("change", startQuiz);
+
+// Init
+loadProgress();
+startQuiz();
+</script>
+</body>
+</html>
